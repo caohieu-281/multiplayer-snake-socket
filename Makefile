@@ -46,7 +46,7 @@ LIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 all: all-before $(OUTPUT) $(CLIENT) $(SERVER) all-after
 	@echo Makefile complete!
 
-CLIENT_LIB = src/client.o src/login.o src/view.o 
+CLIENT_LIB = src/client.o  src/view.o src/login.o src/socket.o
 SERVER_LIB = src/server.o
 
 $(CLIENT): $(CLIENT_LIB)
