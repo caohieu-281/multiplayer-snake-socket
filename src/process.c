@@ -63,7 +63,7 @@ int string_split(const char *str, char c, char ***arr)
 
 void readUserFromFile()
 {
-    FILE *fin = fopen("./data/datauser.txt", "r");
+    FILE *fin = fopen(FILE_DATA, "r");
     if (fin == NULL)
     {
         printf("Can't open file\n");

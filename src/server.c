@@ -1,6 +1,6 @@
 #include "init.h"
 
-void *connection_handler(void *client_socket)
+void *connection_handler(int *client_socket)
 {
 	int socket = *(int *)client_socket;
 	int send_status;
