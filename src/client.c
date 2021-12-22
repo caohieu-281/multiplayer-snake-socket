@@ -1,5 +1,8 @@
 #include<stdio.h>
+#include "login.h"
 
-int main(){
-    printf("afaff");
+
+int main()
+{
+    Login();
 }

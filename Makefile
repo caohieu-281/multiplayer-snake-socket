@@ -46,11 +46,14 @@ LIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 all: all-before $(OUTPUT) $(CLIENT) $(SERVER) all-after
 	@echo Makefile complete!
 
-$(CLIENT): src/client.o
-	$(CC) $(CFLAGS) $(INCLUDES) -o output/client src/client.o $(LFLAGS) $(LIBS)
+CLIENT_LIB = src/client.o src/login.o src/view.o 
+SERVER_LIB = src/server.o
 
-$(SERVER): src/server.o
-	$(CC) $(CFLAGS) $(INCLUDES) -o output/server src/server.o $(LFLAGS) $(LIBS)
+$(CLIENT): $(CLIENT_LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) -o output/client $(CLIENT_LIB) $(LFLAGS) $(LIBS)
+
+$(SERVER): $(SERVER_LIB)
+	$(CC) $(CFLAGS) $(INCLUDES) -o output/server  $(SERVER_LIB) $(LFLAGS) $(LIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
@@ -59,8 +62,7 @@ all-before:
 	$(MD) ./obj
 
 all-after:
-	$(MV) src/client.o ./obj
-	$(MV) src/server.o ./obj
+	$(MV) src/*.o ./obj
 
 # define object directory
 OBJ_PATH := ./obj/
