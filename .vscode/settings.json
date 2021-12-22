@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "in.h": "c",
-        "socket.h": "c"
-    }
+        "socket.h": "c",
+        "stdlib.h": "c",
+        "init.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

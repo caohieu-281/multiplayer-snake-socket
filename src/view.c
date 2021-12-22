@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include "init.h"
 
 void ViewSnake()
 {
@@ -14,9 +14,10 @@ void ViewSnake()
 
 void ViewLogin()
 {
+    printf("\n---------------Welcome to snake game---------------\n");
     printf(" _________________________________________________ \n");
-    printf("|                 => [1]. Register                |\n");
-    printf("|                 => [2]. Login                   |\n");
+    printf("|                 => [1]. Sign In                 |\n");
+    printf("|                 => [2]. Sign Up                 |\n");
     printf("|_________________________________________________|\n");
-    printf("Choose: ");
+    printf("Your Choose: ");
 }

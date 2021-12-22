@@ -23,9 +23,6 @@ SRC		:= src
 # define include directory
 INCLUDE	:= include
 
-# define lib directory
-LIB		:= lib
-
 CLIENT := client
 SERVER := server
 INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
@@ -40,20 +37,19 @@ DD := rmdir
 # define any directories containing header files other than /usr/include
 INCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 
-# define the C libs
-LIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
-
 all: all-before $(OUTPUT) $(CLIENT) $(SERVER) all-after
 	@echo Makefile complete!
 
-CLIENT_LIB = src/client.o src/view.o src/login.o src/socket.o
-SERVER_LIB = src/server.o
+LIBSBOTH = src/view.o src/login.o src/socket.o
+
+CLIENT_LIB = src/client.o $(LIBSBOTH)
+SERVER_LIB = src/server.o $(LIBSBOTH)
 
 $(CLIENT): $(CLIENT_LIB)
-	$(CC) $(CFLAGS) $(INCLUDES) -o output/client $(CLIENT_LIB) $(LFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o output/client $(CLIENT_LIB) $(LFLAGS) 
 
 $(SERVER): $(SERVER_LIB)
-	$(CC) $(CFLAGS) $(INCLUDES) -o output/server  $(SERVER_LIB) $(LFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o output/server  $(SERVER_LIB) $(LFLAGS) 
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
@@ -70,5 +66,6 @@ OBJ_PATH := ./obj/
 clean:
 	$(RM) output/client output/server
 	$(RM) $(OBJ_PATH)*.o
+	$(RM) src/*.o
 	$(DD) ./obj
 	@echo Cleanup complete!
