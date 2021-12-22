@@ -14,7 +14,6 @@ int SignIn(int sockfd)
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
 
-    printf("%s\n", messageClient);
     if (strcmp(messageClient, "1") == 0)
         return 1;
     else

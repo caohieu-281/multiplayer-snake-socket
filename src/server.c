@@ -9,6 +9,7 @@ void *connection_handler(void *client_socket)
 	int count;
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
 	{
+        messageServer[read_len] = 0;
 		printf("String receive from client: %s\n", messageServer);
 
 		count = string_split(messageServer, ' ', &arr);
