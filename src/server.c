@@ -5,17 +5,21 @@ void *connection_handler(void *client_socket){
 	int read_len;
 	char client_message[100];
 	int send_status;
+	char **arr = NULL;
+	int count;
 	while( (read_len=recv(socket,client_message, 100,0))>0)
 	{
 		//end of string marker
 		client_message[read_len] = '\0';
 		printf("String receive from client: %s\n", client_message);
-        for(int i=0;i<read_len;i++)
-            client_message[i] = toupper(client_message[i]);
-		printf("%s", client_message);
-		if(strcmp(client_message,"Q")==0)	break;
+
+		count = string_split(client_message, ' ', &arr);
+		if (strcmp(arr[0], "1") == 0) {
+			
+		}
+		
 		//Send the message back to client
-		send_status=send(socket , client_message , strlen(client_message),0);	
+		send_status=send(socket , client_message , strlen(client_message),0);
 	}
 	
 	return 0;

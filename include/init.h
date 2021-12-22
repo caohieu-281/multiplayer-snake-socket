@@ -11,6 +11,8 @@
 #include "socket.h"
 #include "login.h"
 #include "view.h"
+#include "process.h"
+#include <assert.h>
 
 #define MESSAGE_MAX 4096
 #define MAX_PLAYER 5
