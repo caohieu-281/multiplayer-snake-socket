@@ -19,7 +19,7 @@
 #define USERNAME_MAX 50
 #define PASSWORD_MAX 50
 #define MAX_LENGTH 1000
-#define FILE_DATA "../data/datauser.txt"
+#define FILE_DATA "./data/datauser.txt"
 
 char messageClient[MESSAGE_MAX];
 char messageServer[MESSAGE_MAX];
