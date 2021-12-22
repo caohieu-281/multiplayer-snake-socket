@@ -40,7 +40,7 @@ void ClientSendMessageToServer(int sockfd)
 void ClientReceiveMessageFromServer(int sockfd)
 {
     printf("%s\n", message);
-    int rcvBytes = recv(sockfd, message, MESSAGE_MAX, 0);
+    int rcvBytes = recv(sockfd, message, strlen(message), 0);
     printf("%s\n", message);
     if (rcvBytes == 0) {
         perror("The server terminated prematurely");
