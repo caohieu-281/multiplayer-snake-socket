@@ -13,21 +13,24 @@
 int main(int argc, char *argv[])
 {
     int sockfd = ClientCreateSocket(atoi(argv[1]));
+    ViewSnake();
+    ViewLogin();
+
     while (1)
     {
-        ViewSnake();
-        ViewLogin();
         int choice;
         scanf("%d", &choice);
         // int send_status = send(sockfd, response, sizeof(response), 0);
         if(choice == 1) 
         {   
-            SignIn(sockfd);
-
+            if(SignIn(sockfd))
+                printf("Dang nhap thanh cong \n");
+            else printf("Dang nhap that bai");
         }
-        break;
-        if(choice == 2)
-            break;
+        else if(choice == 2)
+        {
+            
+        }
     }
 
     close(sockfd);

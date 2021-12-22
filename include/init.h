@@ -18,8 +18,20 @@
 #define MAX_PLAYER 5
 #define USERNAME_MAX 50
 #define PASSWORD_MAX 50
+#define MAX_LENGTH 1000
+#define FILE_DATA "../data/datauser.txt"
 
-char message[MESSAGE_MAX];
+char messageClient[MESSAGE_MAX];
+char messageServer[MESSAGE_MAX];
 
+typedef struct _User{
+    char username[USERNAME_MAX];
+    char password[PASSWORD_MAX];
+    int socketID;
+    int score;
+} User;
+
+int numberUsers;
+User listUsers[MAX_PLAYER];
 
 

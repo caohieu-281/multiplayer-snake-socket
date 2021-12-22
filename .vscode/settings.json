@@ -3,7 +3,8 @@
         "in.h": "c",
         "socket.h": "c",
         "stdlib.h": "c",
-        "init.h": "c"
+        "init.h": "c",
+        "system_error": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

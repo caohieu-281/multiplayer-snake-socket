@@ -30,7 +30,7 @@ int ClientCreateSocket(int port)
 
 void ClientSendMessageToServer(int sockfd)
 {
-    int sendBytes = send(sockfd, message, strlen(message), 0);
+    int sendBytes = send(sockfd, messageClient, strlen(messageClient), 0);
     if (sendBytes < 0) {
         perror("Not send message to server");
         exit(0);
@@ -39,14 +39,14 @@ void ClientSendMessageToServer(int sockfd)
 
 void ClientReceiveMessageFromServer(int sockfd)
 {
-    printf("%s\n", message);
-    int rcvBytes = recv(sockfd, message, strlen(message), 0);
-    printf("%s\n", message);
+    printf("**%s\n**", messageClient);
+
+    int rcvBytes = recv(sockfd, messageClient, strlen(messageClient), 0);
+    printf("**%s\n**", messageClient);
     if (rcvBytes == 0) {
         perror("The server terminated prematurely");
         exit(0);
     }
-    printf("%s\n", message);
 }
 
 int ServerCreateSocket(int port)
@@ -84,4 +84,15 @@ int ServerCreateSocket(int port)
     else
         printf("Server listening..\n");
     return server_socket;
+}
+
+void ServerSendToClient(int socket)
+{
+    printf("%s\n", messageServer);
+    int send_status = send(socket , messageServer , strlen(messageServer), 0);
+    printf("%s\n", messageServer);
+    if(send_status < 0)
+    {
+        perror("Not send message to user\n");
+    }
 }
