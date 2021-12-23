@@ -32,9 +32,6 @@ int SignUp(int sockfd)
     sprintf(messageClient, "2 %s %s", username, password);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    printf("mess: **%s**\n", messageClient);
-    char check[MAX_LENGTH];
-    strcpy(check, "1");
     if (strcmp(messageClient, "1") == 0)
         return 1;
     else
