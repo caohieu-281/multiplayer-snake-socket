@@ -13,11 +13,15 @@ int SignIn(int sockfd)
 
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-
+    // Login success
     if (strcmp(messageClient, "1") == 0)
         return 1;
-    else
+    // Wrong password
+    if (strcmp(messageClient, "0") == 0)
         return 0;
+    // User not exist
+    else
+        return -1;
 }
 
 void SignUp(int sockfd)
@@ -36,5 +40,4 @@ void SignUp(int sockfd)
         return 1;
     else
         return 0;
-
 }

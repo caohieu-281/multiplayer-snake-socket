@@ -21,6 +21,11 @@ void *connection_handler(int *client_socket)
 				strcpy(messageServer, "1");
 				ServerSendToClient(socket);
 			}
+            if (check == -1)
+			{
+				strcpy(messageServer, "-1");
+				ServerSendToClient(socket);
+			}
 			else
 			{
 				strcpy(messageServer, "0");
