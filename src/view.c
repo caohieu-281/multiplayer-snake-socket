@@ -1,6 +1,6 @@
 #include "init.h"
 
-void ViewSnake()
+void ViewWelcomeScreen()
 {
     system("clear");
     printf("     _______  __    _  _______  ___   _  _______   \n");
@@ -12,12 +12,25 @@ void ViewSnake()
     printf("    |_______||_|  |__||__| |__||___| |_||_______|  \n");
 }
 
-void ViewLogin()
+void ViewLoginScreen()
 {
     printf("\n---------------Welcome to snake game---------------\n");
     printf(" _________________________________________________ \n");
     printf("|                 => [1]. Sign In                 |\n");
     printf("|                 => [2]. Sign Up                 |\n");
+    printf("|                 => [3]. Quit game               |\n");
+    printf("|_________________________________________________|\n");
+    printf("Your Choose: ");
+}
+
+void ViewFunctionInGameScreen()
+{
+    printf(" _______________Sign in successful!!!_____________\n");
+    printf("|             => [1]. Join waiting-room           |\n");
+    printf("|             => [2]. Change password             |\n");
+    printf("|             => [3]. Show profile                |\n");
+    printf("|             => [4]. Show leaderboard            |\n");
+    printf("|             => [5]. Log out                     |\n");
     printf("|_________________________________________________|\n");
     printf("Your Choose: ");
 }

@@ -2,6 +2,7 @@
 
 int SignIn(int sockfd)
 {
+    printf("\nInput username and password to sign in\n");
     char username[USERNAME_MAX], password[PASSWORD_MAX];
     printf("Username: ");
     scanf("%s", username);
@@ -26,6 +27,7 @@ int SignIn(int sockfd)
 
 int SignUp(int sockfd)
 {
+    printf("\nInput username and password to sign up\n");
     char username[USERNAME_MAX], password[PASSWORD_MAX];
     printf("Username: ");
     scanf("%s", username);
@@ -40,4 +42,52 @@ int SignUp(int sockfd)
         return 1;
     else
         return 0;
+}
+
+void LoginGame(int sockfd)
+{
+    int status, choice, signup;
+    do
+    {
+        ViewLoginScreen();
+        scanf("%d", &choice);
+        if (choice == 1)
+        {
+            int status = SignIn(sockfd);
+            if (status == 1)
+            {
+                ViewFunctionInGameScreen();
+                break;
+            }
+            if (status == 0)
+                printf("Wrong password!!!\n\n");
+            else
+            {
+                printf("User not exist!!!\n");
+                return LoginGame(sockfd);
+            }
+        }
+        else if (choice == 2)
+        {
+            int signup;
+            do
+            {
+                signup = SignUp(sockfd);
+                if (signup)
+                {
+                    printf("Sign up successful!!!\n");
+                    return LoginGame(sockfd);
+                }
+                else printf("Sign up fail!!!\nAccount already exist!!!\n");
+            } while (signup != 1);
+            break;
+        }
+        else if (choice == 3){
+            printf("\n____________Bye bye, see ya!!!______________\n\n");
+            exit(0);
+        }
+        else{
+            printf("We don't have this choice!!!\n");
+        }
+    } while (status != 1);
 }
