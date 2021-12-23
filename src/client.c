@@ -21,14 +21,14 @@ int main(int argc, char *argv[])
         scanf("%d", &choice);
         // int send_status = send(sockfd, response, sizeof(response), 0);
         int status;
-        if(choice == 1)
+        if (choice == 1)
         {
             do
             {
                 status = SignIn(sockfd);
                 if (status == 1)
                 {
-                    printf("Login successful!!!\n\n");
+                    printf("Sign in successful!!!\n\n");
                     break;
                 }
                 if (status == 0)
@@ -37,24 +37,36 @@ int main(int argc, char *argv[])
                 {
                     printf("User not exist!!!\n");
                     printf("If you dont have account, please press [s] to sign up!!!\n");
-                    printf("Or press any key to continue sign in: ");
+                    printf("Or press other key to continue sign in: ");
                     char *s;
                     scanf("%s", s);
-                    if(strcasecmp(s, "s") == 0) {
-                        choice = 2;
+                    if (strcasecmp(s, "s") == 0)
+                    {
+                        if (SignUp(sockfd))
+                        {
+                            printf("Sign up successful!!!\n");
+                            break;
+                        }
+                        else
+                            printf("Sign up fail!!!\nAccount already exist!!!\n");
                         break;
                     }
-                }     
-            }while(status != 1);
+                }
+            } while (status != 1);
             break;
         }
         else if (choice == 2)
         {
-            printf("sign up le\n");
+            if (SignUp(sockfd))
+            {
+                printf("Sign up successful!!!\n");
+                break;
+            }
+            else
+                printf("Sign up fail!!!\nAccount already exist!!!\n");
             break;
         }
     }
-
     close(sockfd);
 
     return 0;

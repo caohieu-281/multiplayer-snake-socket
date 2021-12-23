@@ -1,6 +1,5 @@
 #include "init.h"
 
-
 int ClientCreateSocket(int port)
 {
     int sockfd;
@@ -31,7 +30,8 @@ int ClientCreateSocket(int port)
 void ClientSendMessageToServer(int sockfd)
 {
     int sendBytes = send(sockfd, messageClient, strlen(messageClient), 0);
-    if (sendBytes < 0) {
+    if (sendBytes < 0)
+    {
         perror("Not send message to server");
         exit(0);
     }
@@ -41,7 +41,8 @@ void ClientReceiveMessageFromServer(int sockfd)
 {
     int rcvBytes = recv(sockfd, &messageClient, strlen(messageClient), 0);
     messageClient[rcvBytes] = 0;
-    if (rcvBytes == 0) {
+    if (rcvBytes < 0)
+    {
         perror("The server terminated prematurely");
         exit(0);
     }
@@ -86,19 +87,16 @@ int ServerCreateSocket(int port)
 
 void ServerSendToClient(int socket)
 {
-    int send_status = send(socket , messageServer , strlen(messageServer), 0);
-    if(send_status < 0)
-    {
+    int send_status = send(socket, messageServer, strlen(messageServer), 0);
+    if (send_status < 0)
         perror("Not send message to user\n");
-    }
 }
 
 void ServerReceiveMessageFromClient(int socket)
 {
-    int read_len = recv(socket, messageServer, MESSAGE_MAX, 0);
-    if(read_len < 0)
-    {
+    int read_len = recv(socket, messageServer, strlen(messageServer), 0);
+    if (read_len < 0)
         perror("Not receive message from user\n");
-    }
-    else messageServer[read_len] = 0;
+    else
+        messageServer[read_len] = 0;
 }

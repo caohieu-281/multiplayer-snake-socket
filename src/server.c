@@ -32,6 +32,22 @@ void *connection_handler(int *client_socket)
 				ServerSendToClient(socket);
 			}
 		}
+		else if(strcmp(arr[0], "2") == 0)
+		{
+			int check = checkSignIn(arr[1], arr[2]);
+			if (check == -1)
+			{
+				addUser(arr[1], arr[2]);
+				writeUserToFile();
+				strcpy(messageServer, "1");
+				ServerSendToClient(socket);
+			}
+			else
+			{
+				strcpy(messageServer, "0");
+				ServerSendToClient(socket);
+			}
+		}
 
 		// Send the message back to client
 		//  send_status=send(socket , message , strlen(message),0);
