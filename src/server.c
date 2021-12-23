@@ -5,19 +5,26 @@ void *connection_handler(int *client_socket)
 	int socket = *(int *)client_socket;
 	int send_status;
 	int read_len;
-	char **arr = NULL;
-	int count;
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
-	{
+	{	
+		int count;
+		char **arr = NULL;
         messageServer[read_len] = 0;
 		printf("String receive from client: %s\n", messageServer);
-
+		//printf("abc");
 		count = string_split(messageServer, ' ', &arr);
+		printf("%d %s", count, arr[0]);
 		if (strcmp(arr[0], "1") == 0)
 		{
 			int check = checkSignIn(arr[1], arr[2]);
 			if (check == 1)
 			{
+				for (int i = 0; i < numberUsers; i++) {
+					if (listUsers[i].socketID == socket) {
+						listUsers[i].status = 1;
+					}
+				}
+
 				strcpy(messageServer, "1");
 			}
             else if (check == -1)
@@ -44,6 +51,15 @@ void *connection_handler(int *client_socket)
 			{
 				strcpy(messageServer, "0");
 				ServerSendToClient(socket);
+			}
+		}
+		else if(strcmp(arr[0], "5") == 0) {
+			printf("%d", numberUsers);
+			for (int i = 0; i < numberUsers; i++) {
+				if (listUsers[i].socketID == socket) {
+					sprintf(messageServer, "%s %s", listUsers[i].username, listUsers[i].password);
+					ServerSendToClient(socket);
+				}
 			}
 		}
 

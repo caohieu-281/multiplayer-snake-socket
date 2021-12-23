@@ -38,25 +38,27 @@ int SignUp(int sockfd)
     sprintf(messageClient, "2 %s %s", username, password);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    if (strcmp(messageClient, "1") == 0)
+    if (strcmp(messageClient, "1") == 0) {
         return 1;
+    }
     else
         return 0;
 }
 
 void LoginGame(int sockfd)
 {
-    int choice;
+    char choice[MAX_LENGTH];
     do
     {
         ViewLoginScreen();
-        scanf("%d", &choice);
-        if (choice == 1)
+        scanf("%s", choice);
+        fflush(stdin);
+        if (strcmp(choice, "1") == 0)
         {
             int status = SignIn(sockfd);
             if (status == 1)
             {
-                PlayGame();
+                PlayGame(sockfd);
                 break;
             }
             if (status == 0)
@@ -67,7 +69,7 @@ void LoginGame(int sockfd)
                 return LoginGame(sockfd);
             }
         }
-        else if (choice == 2)
+        else if (strcmp(choice, "2") == 0)
         {
             int signup;
             do
@@ -82,12 +84,12 @@ void LoginGame(int sockfd)
             } while (signup != 1);
             break;
         }
-        else if (choice == 3){
+        else if (strcmp(choice, "3") == 0) {
             printf("\n____________Bye bye, see ya!!!______________\n\n");
             exit(0);
         }
         else{
             printf("We don't have this choice!!!\n");
         }
-    } while (choice != 3);
+    } while (strcmp(choice, "3") != 0);
 }

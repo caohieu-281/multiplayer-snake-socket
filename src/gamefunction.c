@@ -18,6 +18,7 @@ void PlayGame(int sockfd)
         else if (choice == 3)
         {
             printf("\n_______This is your profile________\n\n");
+            ShowProfile(sockfd);
         }
         else if (choice == 4)
         {
@@ -27,10 +28,10 @@ void PlayGame(int sockfd)
         {
             if(LogOut(sockfd))
             {
-                return LoginGame(sockfd); 
+                LoginGame(sockfd); 
             }
             else
-                return PlayGame(sockfd);
+                PlayGame(sockfd);
         }
         else
         {
@@ -45,10 +46,17 @@ int LogOut(int sockfd)
     printf("Do you want logout?\n");
     printf("Press [y] or [Y] to logout, other to continue: ");
     scanf("%s", input);
-    printf("%s\n", input);
-    printf("%d\n", strlen(input));
+    fflush(stdin);
     if(strcasecmp(input, "y") == 0)
         return 1;
     else
         return 0;
+}
+
+void ShowProfile(int sockfd) {
+    memset(messageClient, 0, sizeof(messageClient));
+    sprintf(messageClient, "5 %d", sockfd);
+    ClientSendMessageToServer(sockfd);
+    ClientReceiveMessageFromServer(sockfd);
+    printf("%s", messageClient);
 }

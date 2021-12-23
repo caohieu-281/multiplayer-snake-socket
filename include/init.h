@@ -17,6 +17,7 @@
 
 #define MESSAGE_MAX 4096
 #define MAX_PLAYER 5
+#define MAX_USER 1000
 #define USERNAME_MAX 50
 #define PASSWORD_MAX 50
 #define MAX_LENGTH 1000
@@ -30,9 +31,12 @@ typedef struct _User{
     char password[PASSWORD_MAX];
     int socketID;
     int score;
+    int status;  // 0: not signin, 1: signned in
 } User;
 
+User currentUsers[MAX_PLAYER];
+
 int numberUsers;
-User listUsers[MAX_PLAYER];
+User listUsers[MAX_USER];
 
 

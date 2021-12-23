@@ -2,6 +2,8 @@
 
 int string_split(const char *str, char c, char ***arr)
 {
+    printf("asdad");
+    
     int count = 1;
     int token_len = 1;
     int i = 0;
@@ -57,7 +59,6 @@ int string_split(const char *str, char c, char ***arr)
         }
         p++;
     }
-
     return count;
 }
 
