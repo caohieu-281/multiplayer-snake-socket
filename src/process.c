@@ -2,8 +2,6 @@
 
 int string_split(const char *str, char c, char ***arr)
 {
-    printf("asdad");
-    
     int count = 1;
     int token_len = 1;
     int i = 0;
@@ -83,21 +81,24 @@ void readUserFromFile()
 
         strcpy(listUsers[id].username, arr[0]);
         strcpy(listUsers[id].password, arr[1]);
+        listUsers[id].status = 0;
     }
     numberUsers = id + 1;
 
     fclose(fin);
 }
 
-int checkSignIn(char *username, char *password)
+int checkSignIn(char *username, char *password, int socket)
 {
     for (int i = 0; i < numberUsers; i++)
     {
         if (strcmp(username, listUsers[i].username) == 0)
         {
-            if (strcmp(password, listUsers[i].password) == 0)
-                // correct user
+            if (strcmp(password, listUsers[i].password) == 0){
+                listUsers[i].status = 1;
+                listUsers[i].socketID = socket;                
                 return 1;
+            }
             else
                 // wrong password
                 return 0;

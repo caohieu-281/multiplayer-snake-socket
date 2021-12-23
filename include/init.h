@@ -34,9 +34,5 @@ typedef struct _User{
     int status;  // 0: not signin, 1: signned in
 } User;
 
-User currentUsers[MAX_PLAYER];
-
 int numberUsers;
 User listUsers[MAX_USER];
-
-

@@ -55,8 +55,8 @@ int LogOut(int sockfd)
 
 void ShowProfile(int sockfd) {
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "5 %d", sockfd);
+    sprintf(messageClient, "5");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    printf("%s", messageClient);
+    printf("Info from server %s\n", messageClient);
 }

@@ -11,20 +11,12 @@ void *connection_handler(int *client_socket)
 		char **arr = NULL;
         messageServer[read_len] = 0;
 		printf("String receive from client: %s\n", messageServer);
-		//printf("abc");
 		count = string_split(messageServer, ' ', &arr);
-		printf("%d %s", count, arr[0]);
 		if (strcmp(arr[0], "1") == 0)
 		{
-			int check = checkSignIn(arr[1], arr[2]);
+			int check = checkSignIn(arr[1], arr[2], socket);
 			if (check == 1)
 			{
-				for (int i = 0; i < numberUsers; i++) {
-					if (listUsers[i].socketID == socket) {
-						listUsers[i].status = 1;
-					}
-				}
-
 				strcpy(messageServer, "1");
 			}
             else if (check == -1)
@@ -39,7 +31,7 @@ void *connection_handler(int *client_socket)
 		}
 		else if(strcmp(arr[0], "2") == 0)
 		{
-			int check = checkSignIn(arr[1], arr[2]);
+			int check = checkSignIn(arr[1], arr[2], socket);
 			if (check == -1)
 			{
 				addUser(arr[1], arr[2]);
@@ -54,19 +46,20 @@ void *connection_handler(int *client_socket)
 			}
 		}
 		else if(strcmp(arr[0], "5") == 0) {
-			printf("%d", numberUsers);
+			printf("vao dc roi\n");
+			printf("number us %d\n", numberUsers);
 			for (int i = 0; i < numberUsers; i++) {
+				printf("why\n");
+				printf("info %s %s %d %d\n", listUsers[i].username, listUsers[i].password, listUsers[i].socketID, listUsers[i].status);
 				if (listUsers[i].socketID == socket) {
+					printf("?????\n");
+					printf(" hey hey %s %s\n", listUsers[i].username, listUsers[i].password);
 					sprintf(messageServer, "%s %s", listUsers[i].username, listUsers[i].password);
 					ServerSendToClient(socket);
 				}
 			}
 		}
-
-		// Send the message back to client
-		//  send_status=send(socket , message , strlen(message),0);
 	}
-
 	return 0;
 }
 
@@ -75,8 +68,8 @@ int main(int argc, char *argv[])
 	readUserFromFile();
 	int server_socket = ServerCreateSocket(atoi(argv[1]));
 	int no_threads = 0;
-	pthread_t threads[MAX_PLAYER];
-	while (no_threads < MAX_PLAYER)
+	pthread_t threads[MAX_USER];
+	while (no_threads < MAX_USER)
 	{
 		printf("Listening...\n");
 		int client_socket = accept(server_socket, NULL, NULL);
@@ -97,14 +90,11 @@ int main(int argc, char *argv[])
 		no_threads++;
 	}
 	int k = 0;
-	for (k = 0; k < MAX_PLAYER; k++)
+	for (k = 0; k < MAX_USER; k++)
 	{
 		pthread_join(threads[k], NULL);
 	}
 
-	// int send_status;
-	// send_status=send(client_socket, server_message, sizeof(server_message), 0);
 	close(server_socket);
-
 	return 0;
 }
