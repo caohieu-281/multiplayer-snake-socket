@@ -19,18 +19,16 @@ void *connection_handler(int *client_socket)
 			if (check == 1)
 			{
 				strcpy(messageServer, "1");
-				ServerSendToClient(socket);
 			}
-            if (check == -1)
+            else if (check == -1)
 			{
 				strcpy(messageServer, "-1");
-				ServerSendToClient(socket);
 			}
 			else
 			{
 				strcpy(messageServer, "0");
-				ServerSendToClient(socket);
 			}
+			ServerSendToClient(socket);
 		}
 		else if(strcmp(arr[0], "2") == 0)
 		{

@@ -40,7 +40,7 @@ INCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 all: all-before $(OUTPUT) $(CLIENT) $(SERVER) all-after
 	@echo Makefile complete!
 
-LIBSBOTH = src/view.o src/login.o src/socket.o src/process.o
+LIBSBOTH = src/view.o src/login.o src/socket.o src/process.o src/gamefunction.o
 
 CLIENT_LIB = src/client.o $(LIBSBOTH)
 SERVER_LIB = src/server.o $(LIBSBOTH)

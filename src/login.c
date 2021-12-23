@@ -46,7 +46,7 @@ int SignUp(int sockfd)
 
 void LoginGame(int sockfd)
 {
-    int status, choice, signup;
+    int choice;
     do
     {
         ViewLoginScreen();
@@ -56,7 +56,7 @@ void LoginGame(int sockfd)
             int status = SignIn(sockfd);
             if (status == 1)
             {
-                ViewFunctionInGameScreen();
+                PlayGame();
                 break;
             }
             if (status == 0)
@@ -89,5 +89,5 @@ void LoginGame(int sockfd)
         else{
             printf("We don't have this choice!!!\n");
         }
-    } while (status != 1);
+    } while (choice != 3);
 }

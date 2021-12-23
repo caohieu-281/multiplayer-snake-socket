@@ -12,6 +12,7 @@
 #include "login.h"
 #include "view.h"
 #include "process.h"
+#include "gamefunction.h"
 #include <assert.h>
 
 #define MESSAGE_MAX 4096

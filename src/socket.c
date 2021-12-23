@@ -39,8 +39,8 @@ void ClientSendMessageToServer(int sockfd)
 
 void ClientReceiveMessageFromServer(int sockfd)
 {
-    int rcvBytes = recv(sockfd, &messageClient, strlen(messageClient), 0);
-    messageClient[rcvBytes] = 0;
+    int rcvBytes = recv(sockfd, messageClient, strlen(messageClient), 0);
+    messageClient[rcvBytes] = '\0';
     if (rcvBytes < 0)
     {
         perror("The server terminated prematurely");
@@ -98,5 +98,5 @@ void ServerReceiveMessageFromClient(int socket)
     if (read_len < 0)
         perror("Not receive message from user\n");
     else
-        messageServer[read_len] = 0;
+        messageServer[read_len] = '\0';
 }
