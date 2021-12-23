@@ -76,6 +76,10 @@ void readUserFromFile()
     {
         id++;
         int count = string_split(readFile, ' ', &arr);
+        for (int i = 0; i < count; i++)
+            if (arr[i][strlen(arr[i])-1] == '\n')
+                arr[i][strlen(arr[i])-1] = 0;
+
         strcpy(listUsers[id].username, arr[0]);
         strcpy(listUsers[id].password, arr[1]);
     }
@@ -88,18 +92,42 @@ int checkSignIn(char *username, char *password)
 {
     for (int i = 0; i < numberUsers; i++)
     {
-        if(strcmp(username, listUsers[i].username) == 0)
+        if (strcmp(username, listUsers[i].username) == 0)
         {
-            if(strcmp(password, listUsers[i].password) == 0) 
+            if (strcmp(password, listUsers[i].password) == 0)
                 // correct user
                 return 1;
-            else 
+            else
                 // wrong password
                 return 0;
         }
     }
     // not find users
     return -1;
+}
+
+void addUser(char *usename, char *password)
+{
+    strcpy(listUsers[numberUsers].username, usename);
+    strcpy(listUsers[numberUsers].password, password);
+    numberUsers++;
+}
+
+void readUserToFile()
+{
+    FILE *fin = fopen(FILE_DATA, "w");
+    if (fin == NULL)
+    {
+        printf("Can't open file\n");
+        return;
+    }
+    char charLine[MAX_LENGTH];
+    for (int i = 0; i < numberUsers; i++)
+    {
+        sprintf(charLine, "%s %s\n", listUsers[i].username, listUsers[i].password);
+        fputs(charLine, fin);
+    }
+    fclose(fin);
 }
 
 void sortScore()

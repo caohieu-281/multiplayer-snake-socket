@@ -29,7 +29,9 @@ int main(int argc, char *argv[])
         }
         else if(choice == 2)
         {
-            
+            if(SignUp(sockfd))
+                printf("Dang ky thanh cong \n");
+            else printf("Dang ky that bai");
         }
     }
 

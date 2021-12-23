@@ -20,7 +20,7 @@ int SignIn(int sockfd)
         return 0;
 }
 
-void SignUp(int sockfd)
+int SignUp(int sockfd)
 {
     char username[USERNAME_MAX], password[PASSWORD_MAX];
     printf("Username: ");
@@ -32,7 +32,10 @@ void SignUp(int sockfd)
     sprintf(messageClient, "2 %s %s", username, password);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    if (strcmp(messageClient, "1") != 0)
+    printf("mess: **%s**\n", messageClient);
+    char check[MAX_LENGTH];
+    strcpy(check, "1");
+    if (strcmp(messageClient, "1") == 0)
         return 1;
     else
         return 0;
