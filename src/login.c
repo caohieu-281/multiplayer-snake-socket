@@ -87,9 +87,13 @@ void LoginGame(int sockfd)
             break;
         }
         else if (strcmp(choice, "3") == 0) {
-            printf("\n________________Bye bye, see ya!!!_______________\n\n");
-            close(sockfd);
-            exit(0);
+            if(Back("quit game")){
+                printf("\n________________Bye bye, see ya!!!_______________\n\n");
+                close(sockfd);
+                exit(0);
+            }
+            else
+                LoginGame(sockfd);
         }
         else{
             printf("We don't have this choice!!!\n");

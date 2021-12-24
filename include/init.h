@@ -7,6 +7,7 @@
 #include <string.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 #include "socket.h"
 #include "login.h"

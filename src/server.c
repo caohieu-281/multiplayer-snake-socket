@@ -73,21 +73,14 @@ void *connection_handler(int *client_socket)
 			}
 		}
 		else if(strcmp(arr[0], "7") == 0) {
-			if(strcasecmp(arr[1], "y") == 0) {
-				for (int i = 0; i < numberUsers; i++) {
-					if (listUsers[i].socketID == socket && listUsers[i].status == 1) {
-						listUsers[i].status = 0;
-						memset(messageServer, 0, sizeof(messageServer));
-						sprintf(messageServer, "1");
-						ServerSendToClient(socket);
-						break;
-					}
+			for (int i = 0; i < numberUsers; i++) {
+				if (listUsers[i].socketID == socket && listUsers[i].status == 1) {
+					listUsers[i].status = 0;
+					memset(messageServer, 0, sizeof(messageServer));
+					sprintf(messageServer, "1");
+					ServerSendToClient(socket);
+					break;
 				}
-			}
-			else {
-				memset(messageServer, 0, sizeof(messageServer));
-				sprintf(messageServer, "0");
-				ServerSendToClient(socket);
 			}
 		}
 	}

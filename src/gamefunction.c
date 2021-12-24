@@ -2,82 +2,114 @@
 
 void PlayGame(int sockfd)
 {
-    int choice;
+    char choice[MAX_LENGTH];
     do
     {
         ViewFunctionInGameScreen();
-        scanf("%d", &choice);
-        if (choice == 1)
+        scanf("%s", choice);
+        fflush(stdin);
+        if (strcmp(choice, "1") == 0)
         {
             printf("\n_______Let's play________\n\n");
         }
-        else if (choice == 2)
+        else if (strcmp(choice, "2") == 0)
         {
+            system("clear");
             printf("\n _________________Change Password_________________\n\n");
-            if(ChangePassword(sockfd))
+            if (ChangePassword(sockfd))
                 PlayGame(sockfd);
-            else{
+            else
+            {
                 printf(" ____________Password is not exactly!!!___________\n\n");
                 ChangePassword(sockfd);
             }
         }
-        else if (choice == 3)
+        else if (strcmp(choice, "3") == 0)
         {
+            system("clear");
             ShowProfile(sockfd);
         }
-        else if (choice == 4)
+        else if (strcmp(choice, "4") == 0)
         {
+            system("clear");
             printf("\n_______This is leaderboard________\n\n");
         }
-        else if (choice == 5)
+        else if (strcmp(choice, "5") == 0)
         {
-            if(LogOut(sockfd))
+            system("clear");
+            if (LogOut(sockfd))
             {
-                LoginGame(sockfd); 
+                system("clear");
+                LoginGame(sockfd);
             }
             else
                 PlayGame(sockfd);
         }
         else
-        {
-            printf("We don't have this choice!!!\n");
-        }
+            printf(" ___________We don't have this choice!!!__________\n\n");
     } while (choice != 5);
 }
 
-int ChangePassword(sockfd) {
-    char oldPassword[PASSWORD_MAX], newPassword[PASSWORD_MAX], renewPassword[PASSWORD_MAX];
+int ChangePassword(sockfd)
+{
+    char currentPassword[PASSWORD_MAX], newPassword[PASSWORD_MAX], renewPassword[PASSWORD_MAX];
     int check = 0;
     printf("Current password: ");
-    scanf("%s", oldPassword);
+    scanf("%s", currentPassword);
     fflush(stdin);
-    do {
+    do
+    {
         printf("New password: ");
         scanf("%s", newPassword);
         fflush(stdin);
         printf("Confirm new password: ");
         scanf("%s", renewPassword);
         fflush(stdin);
-        if(strcmp(newPassword, renewPassword) == 0)
+        if (strcmp(newPassword, renewPassword) == 0)
             check = 1;
-        else
-            printf("New password and confirm new password not match!!!\n\n");
-    }while(check != 1);
+        else{
+            printf("New password and confirm new password not match!!!\n");
+            printf("        *****Don't input anything!!!*****        \n");
+            sleep(3);
+            system("clear");
+            printf("\n _________________Change Password_________________\n");
+            printf("Current password: %s\n", currentPassword);
+        }
+            
+    } while (check != 1);
 
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "3 %s %s", oldPassword, newPassword);
+    sprintf(messageClient, "3 %s %s", currentPassword, newPassword);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
 
-    if (strcmp(messageClient, "1") == 0){
-        printf(" ____________Change password success!!!___________\n\n");
+    if (strcmp(messageClient, "1") == 0)
+    {
+        printf(" ____________Change password success!!!___________\n");
+        int back = 0;
+        do
+        {
+            back = Back("return");
+            if (back)
+                system("clear");
+            else
+            {
+                system("clear");
+                printf("\n _________________Change Password_________________\n\n");
+                printf("Current password: %s\n", currentPassword);
+                printf("New password: %s\n", newPassword);
+                printf("Confirm new password: %s\n", newPassword);
+                printf(" ____________Change password success!!!___________\n\n");
+            }
+        } while (back != 1);
         return 1;
     }
     else
         return 0;
 }
 
-void ShowProfile(int sockfd) {
+void ShowProfile(int sockfd)
+{
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "5");
     ClientSendMessageToServer(sockfd);
@@ -87,33 +119,33 @@ void ShowProfile(int sockfd) {
     printf("\n _______________This is your profile______________\n");
     printf("|     Username: %-21s             |\n", arr[0]);
     printf("|     Password: %-21s             |\n", arr[1]);
-    printf("|_________________________________________________|\n\n");
+    printf("|_________________________________________________|\n");
+    if (Back("return"))
+        system("clear");
+    else
+        ShowProfile(sockfd);
 }
 
 int LogOut(int sockfd)
 {
-    int choice;
-    char input[MAX_LENGTH];
-    printf("Do you want logout?\n");
-    printf("Press [y] or [Y] to logout, other to continue: ");
-    scanf("%s", input);
-    fflush(stdin);
-
-    memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "7 %s", input);
-    ClientSendMessageToServer(sockfd);
-    ClientReceiveMessageFromServer(sockfd);
-
-    if (strcmp(messageClient, "1") == 0)
-        return 1;
-    else
-        return 0;
+    if (Back("logout"))
+    {
+        memset(messageClient, 0, sizeof(messageClient));
+        sprintf(messageClient, "7");
+        ClientSendMessageToServer(sockfd);
+        ClientReceiveMessageFromServer(sockfd);
+        if (strcmp(messageClient, "1") == 0)
+            return 1;
+        else
+            return 0;
+    }
+    return 0;
 }
 
-int Return(char *want)
+int Back(char *want)
 {
     char input[MAX_LENGTH];
-    printf("Do you want %s?\n", want);
+    printf("\nDo you want %s?\n", want);
     printf("Press [y] or [Y] to %s, other to continue: ", want);
     scanf("%s", input);
     fflush(stdin);

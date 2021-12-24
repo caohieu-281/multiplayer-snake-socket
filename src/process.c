@@ -133,6 +133,7 @@ void writeUserToFile()
     fclose(fin);
 }
 
+
 void sortScore()
 {
     return;
