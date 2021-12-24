@@ -59,6 +59,7 @@ void LoginGame(int sockfd)
             if (status == 1)
             {
                 system("clear");
+                printf(" _______________Sign in successful!!!_____________\n");
                 PlayGame(sockfd);
                 break;
             }
@@ -86,7 +87,8 @@ void LoginGame(int sockfd)
             break;
         }
         else if (strcmp(choice, "3") == 0) {
-            printf("\n____________Bye bye, see ya!!!______________\n\n");
+            printf("\n________________Bye bye, see ya!!!_______________\n\n");
+            close(sockfd);
             exit(0);
         }
         else{

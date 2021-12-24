@@ -14,6 +14,5 @@ int main(int argc, char *argv[])
     int sockfd = ClientCreateSocket(atoi(argv[1]));
     ViewWelcomeScreen();
     LoginGame(sockfd);
-    close(sockfd);
     return 0;
 }

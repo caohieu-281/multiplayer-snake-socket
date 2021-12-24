@@ -45,6 +45,23 @@ void *connection_handler(int *client_socket)
 				ServerSendToClient(socket);
 			}
 		}
+		else if(strcmp(arr[0], "3") == 0){
+			for (int i = 0; i < numberUsers; i++) {
+				if (listUsers[i].socketID == socket && listUsers[i].status == 1) {
+					if(strcmp(listUsers[i].password, arr[1]) == 0){
+						strcpy(listUsers[i].password, arr[2]);
+						memset(messageServer, 0, sizeof(messageServer));
+						sprintf(messageServer, "1");
+					}
+					else{
+						memset(messageServer, 0, sizeof(messageServer));
+						sprintf(messageServer, "0");
+					}
+					ServerSendToClient(socket);
+					break;
+				}
+			}
+		}
 		else if(strcmp(arr[0], "5") == 0) {
 			for (int i = 0; i < numberUsers; i++) {
 				if (listUsers[i].socketID == socket && listUsers[i].status == 1) {
@@ -87,7 +104,6 @@ int main(int argc, char *argv[])
 	{
 		printf("Listening...\n");
 		int client_socket = accept(server_socket, NULL, NULL);
-		printf("client_socket %d", client_socket);
 		puts("Connection accepted");
 		if (pthread_create(&threads[no_threads], NULL, connection_handler, &client_socket) < 0)
 		{
@@ -100,7 +116,7 @@ int main(int argc, char *argv[])
 			exit(0);
 		}
 		else
-			printf("Server acccept the client...\n");
+			printf("Server acccept the client: client_socket %d\n", client_socket);
 		puts("Handler assigned");
 		no_threads++;
 	}

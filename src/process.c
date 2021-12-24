@@ -82,6 +82,7 @@ void readUserFromFile()
         strcpy(listUsers[id].username, arr[0]);
         strcpy(listUsers[id].password, arr[1]);
         listUsers[id].status = 0;
+        
     }
     numberUsers = id + 1;
 
