@@ -58,6 +58,7 @@ void LoginGame(int sockfd)
             int status = SignIn(sockfd);
             if (status == 1)
             {
+                system("clear");
                 PlayGame(sockfd);
                 break;
             }

@@ -48,7 +48,9 @@ int LogOut(int sockfd)
     scanf("%s", input);
     fflush(stdin);
     if(strcasecmp(input, "y") == 0)
+    {
         return 1;
+    }
     else
         return 0;
 }
@@ -58,5 +60,8 @@ void ShowProfile(int sockfd) {
     sprintf(messageClient, "5");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    printf("Info from server %s\n", messageClient);
+    char **arr = NULL;
+    int count = string_split(messageClient, ' ', &arr);
+    printf("Username: %s\n", arr[0]);
+    printf("Password: %s\n", arr[1]);
 }

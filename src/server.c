@@ -46,14 +46,9 @@ void *connection_handler(int *client_socket)
 			}
 		}
 		else if(strcmp(arr[0], "5") == 0) {
-			printf("vao dc roi\n");
-			printf("number us %d\n", numberUsers);
 			for (int i = 0; i < numberUsers; i++) {
-				printf("why\n");
-				printf("info %s %s %d %d\n", listUsers[i].username, listUsers[i].password, listUsers[i].socketID, listUsers[i].status);
 				if (listUsers[i].socketID == socket) {
-					printf("?????\n");
-					printf(" hey hey %s %s\n", listUsers[i].username, listUsers[i].password);
+					memset(messageServer, 0, sizeof(messageServer));
 					sprintf(messageServer, "%s %s", listUsers[i].username, listUsers[i].password);
 					ServerSendToClient(socket);
 				}
@@ -73,6 +68,7 @@ int main(int argc, char *argv[])
 	{
 		printf("Listening...\n");
 		int client_socket = accept(server_socket, NULL, NULL);
+		printf("client_socket %d", client_socket);
 		puts("Connection accepted");
 		if (pthread_create(&threads[no_threads], NULL, connection_handler, &client_socket) < 0)
 		{
