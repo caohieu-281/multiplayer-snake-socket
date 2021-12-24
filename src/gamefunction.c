@@ -47,10 +47,14 @@ int LogOut(int sockfd)
     printf("Press [y] or [Y] to logout, other to continue: ");
     scanf("%s", input);
     fflush(stdin);
-    if(strcasecmp(input, "y") == 0)
-    {
+
+    memset(messageClient, 0, sizeof(messageClient));
+    sprintf(messageClient, "7 %s", input);
+    ClientSendMessageToServer(sockfd);
+    ClientReceiveMessageFromServer(sockfd);
+
+    if (strcmp(messageClient, "1") == 0)
         return 1;
-    }
     else
         return 0;
 }
