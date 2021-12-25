@@ -138,3 +138,10 @@ void sortScore()
 {
     return;
 }
+
+void CountTime(char *message, int time){
+    for(int i=time;i>0;i--){
+        printf("%s in %ds\n", message, i);
+        sleep(1);
+    }
+}

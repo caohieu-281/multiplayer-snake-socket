@@ -67,15 +67,20 @@ int ChangePassword(sockfd)
         fflush(stdin);
         if (strcmp(newPassword, renewPassword) == 0)
             check = 1;
-        else{
+        else
+        {
             printf("New password and confirm new password not match!!!\n");
-            printf("        *****Don't input anything!!!*****        \n");
-            sleep(3);
-            system("clear");
-            printf("\n _________________Change Password_________________\n");
-            printf("Current password: %s\n", currentPassword);
+            if (Back("continue change password", "return") == 0){
+                system("clear");
+                PlayGame(sockfd);
+            }
+            else
+            {
+                system("clear");
+                printf("\n _________________Change Password_________________\n");
+                printf("Current password: %s\n", currentPassword);
+            }
         }
-            
     } while (check != 1);
 
     memset(messageClient, 0, sizeof(messageClient));
@@ -89,7 +94,7 @@ int ChangePassword(sockfd)
         int back = 0;
         do
         {
-            back = Back("return");
+            back = Back("return", "continue stay here");
             if (back)
                 system("clear");
             else
@@ -120,7 +125,7 @@ void ShowProfile(int sockfd)
     printf("|     Username: %-21s             |\n", arr[0]);
     printf("|     Password: %-21s             |\n", arr[1]);
     printf("|_________________________________________________|\n");
-    if (Back("return"))
+    if (Back("return", "continue stay here"))
         system("clear");
     else
         ShowProfile(sockfd);
@@ -128,7 +133,7 @@ void ShowProfile(int sockfd)
 
 int LogOut(int sockfd)
 {
-    if (Back("logout"))
+    if (Back("logout", "continue"))
     {
         memset(messageClient, 0, sizeof(messageClient));
         sprintf(messageClient, "7");
@@ -142,11 +147,11 @@ int LogOut(int sockfd)
     return 0;
 }
 
-int Back(char *want)
+int Back(char *want1, char *want2)
 {
     char input[MAX_LENGTH];
-    printf("\nDo you want %s?\n", want);
-    printf("Press [y] or [Y] to %s, other to continue: ", want);
+    printf("\nDo you want %s?\n", want1);
+    printf("Press [y] or [Y] to %s, other to %s: ", want1, want2);
     scanf("%s", input);
     fflush(stdin);
     if (strcasecmp(input, "y") == 0)

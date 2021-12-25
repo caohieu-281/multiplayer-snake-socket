@@ -1,4 +1,8 @@
-Bây giờ nếu vào 1 nick trên 2 cửa sổ sẽ bị lỗi
+1. Bây giờ nếu vào 1 nick trên 2 cửa sổ sẽ bị lỗi
 vì chỗ socketID nó sẽ đổi sang cửa sổ client mới đăng nhâp
 Maybe nên tạo chỗ socketID là 1 mảng, thì sẽ accept cả 2, coi như là độc lâpj
 Hay nên logout nick đang đăng nhập chỗ khác?
+
+2. Nếu signup xong signin luôn thì sẽ lỗi, signin tiếp thì lại vào đc
+
+3. signup liên tục 2 lần thì sẽ lỗi, lỗi ghi vào file

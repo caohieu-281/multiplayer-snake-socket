@@ -12,7 +12,7 @@
 int main(int argc, char *argv[])
 {
     int sockfd = ClientCreateSocket(atoi(argv[1]));
-    ViewWelcomeScreen();
+    // ViewWelcomeScreen();
     LoginGame(sockfd);
     return 0;
 }

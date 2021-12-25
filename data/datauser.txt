@@ -8,3 +8,4 @@ ko ko
 oi oi
 chan chan
 ok ok
+gau gau

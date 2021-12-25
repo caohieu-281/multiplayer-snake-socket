@@ -10,7 +10,7 @@ void *connection_handler(int *client_socket)
 		int count;
 		char **arr = NULL;
         messageServer[read_len] = 0;
-		printf("String receive from client: %s\n", messageServer);
+		printf("String receive from client %d: %s\n", socket, messageServer);
 		count = string_split(messageServer, ' ', &arr);
 		if (strcmp(arr[0], "1") == 0)
 		{

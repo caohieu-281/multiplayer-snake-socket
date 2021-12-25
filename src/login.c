@@ -2,12 +2,15 @@
 
 int SignIn(int sockfd)
 {
+    system("clear");
     printf("\nInput username and password to sign in\n");
     char username[USERNAME_MAX], password[PASSWORD_MAX];
     printf("Username: ");
     scanf("%s", username);
+    fflush(stdin);
     printf("Password: ");
     scanf("%s", password);
+    fflush(stdin);
 
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "1 %s %s", username, password);
@@ -25,24 +28,62 @@ int SignIn(int sockfd)
         return -1;
 }
 
-int SignUp(int sockfd)
+void SignUp(int sockfd)
 {
+    system("clear");
     printf("\nInput username and password to sign up\n");
     char username[USERNAME_MAX], password[PASSWORD_MAX];
     printf("Username: ");
     scanf("%s", username);
+    fflush(stdin);
     printf("Password: ");
     scanf("%s", password);
-
+    fflush(stdin);
+    
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "2 %s %s", username, password);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    if (strcmp(messageClient, "1") == 0) {
-        return 1;
+    if (strcmp(messageClient, "1") == 0)
+    {
+        printf("Sign up successful!!!\n");
+        int back = 0;
+        do
+        {
+            back = Back("sign in", "continue stay here");
+            if (back)
+            {
+                system("clear");
+                LoginGame(sockfd);
+            }
+            else
+            {
+                printf("\nInput username and password to sign up\n");
+                printf("Username: %s\n", username);
+                printf("Password: %s\n", password);
+                printf("Sign up successful!!!\n");
+            }
+        } while (back != 1);
     }
     else
-        return 0;
+    {
+        printf("\nSign up fail!!!\nAccount already exist!!!\n");
+        int back = 0;
+        do
+        {
+            back = Back("continue sign up", "return home page");
+            if (back)
+            {
+                system("clear");
+                SignUp(sockfd);
+            }
+            else
+            {
+                system("clear");
+                LoginGame(sockfd);
+            }
+        } while (back != 1);
+    }
 }
 
 void LoginGame(int sockfd)
@@ -50,6 +91,7 @@ void LoginGame(int sockfd)
     char choice[MAX_LENGTH];
     do
     {
+        ViewWelcomeScreen();
         ViewLoginScreen();
         scanf("%s", choice);
         fflush(stdin);
@@ -64,30 +106,24 @@ void LoginGame(int sockfd)
                 break;
             }
             if (status == 0)
+            {
                 printf("Wrong password!!!\n\n");
+                CountTime("Return home screen", 3);
+                system("clear");
+            }
             else
             {
-                printf("User not exist!!!\n");
-                return LoginGame(sockfd);
+                printf("User not exist!!!\n\n");
+                CountTime("Return home screen", 3);
+                system("clear");
             }
         }
         else if (strcmp(choice, "2") == 0)
+            SignUp(sockfd);
+        else if (strcmp(choice, "3") == 0)
         {
-            int signup;
-            do
+            if (Back("quit game", "continue"))
             {
-                signup = SignUp(sockfd);
-                if (signup)
-                {
-                    printf("Sign up successful!!!\n");
-                    return LoginGame(sockfd);
-                }
-                else printf("Sign up fail!!!\nAccount already exist!!!\n");
-            } while (signup != 1);
-            break;
-        }
-        else if (strcmp(choice, "3") == 0) {
-            if(Back("quit game")){
                 printf("\n________________Bye bye, see ya!!!_______________\n\n");
                 close(sockfd);
                 exit(0);
@@ -95,7 +131,8 @@ void LoginGame(int sockfd)
             else
                 LoginGame(sockfd);
         }
-        else{
+        else
+        {
             printf("We don't have this choice!!!\n");
         }
     } while (strcmp(choice, "3") != 0);
