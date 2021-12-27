@@ -9,3 +9,6 @@ oi oi
 chan chan
 ok ok
 gau gau
+meo meo
+cho cho
+df df

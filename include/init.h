@@ -35,5 +35,12 @@ typedef struct _User{
     int status;  // 0: not signin, 1: signned in
 } User;
 
+typedef struct _Room{
+    User usersInRoom[MAX_PLAYER];
+    int numberUsersInRoom;
+    int roomID;
+} Room;
+
+Room oneRoom;
 int numberUsers;
 User listUsers[MAX_USER];

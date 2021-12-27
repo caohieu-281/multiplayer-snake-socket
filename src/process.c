@@ -160,6 +160,14 @@ void sortScore()
     return;
 }
 
+// Search user in listUser with sockfd and status
+int SearchUser(User listUsers[], int sockfd, int status){
+    for (int i = 0; i < numberUsers; i++)
+        if (listUsers[i].socketID == sockfd && listUsers[i].status == status)
+            return i;
+}
+
+// Countdown time to do something
 void CountTime(char *message, int time){
     for(int i=time;i>0;i--){
         printf("%s in %ds\n", message, i);
