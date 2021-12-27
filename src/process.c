@@ -60,6 +60,15 @@ int string_split(const char *str, char c, char ***arr)
     return count;
 }
 
+void freeMemory(char ***arr, int count) {
+    for(int i = 0; i < count; i++)
+    {
+        free(arr[i]);
+    }
+
+    free(arr);
+}
+
 void readUserFromFile()
 {
     FILE *fin = fopen(FILE_DATA, "r");
@@ -69,10 +78,10 @@ void readUserFromFile()
         return;
     }
     char readFile[MAX_LENGTH];
-    char **arr;
     int id = -1;
     while (fgets(readFile, MAX_LENGTH, fin))
     {
+        char **arr = NULL;
         id++;
         int count = string_split(readFile, ' ', &arr);
         for (int i = 0; i < count; i++)
@@ -82,7 +91,7 @@ void readUserFromFile()
         strcpy(listUsers[id].username, arr[0]);
         strcpy(listUsers[id].password, arr[1]);
         listUsers[id].status = 0;
-        
+        freeMemory(arr, count);
     }
     numberUsers = id + 1;
 
@@ -107,6 +116,18 @@ int checkSignIn(char *username, char *password, int socket)
     }
     // not find users
     return -1;
+}
+
+int checkSignUp(char *username, char *password, int socket)
+{
+    for (int i = 0; i < numberUsers; i++)
+    {
+        if (strcmp(username, listUsers[i].username) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void addUser(char *usename, char *password)

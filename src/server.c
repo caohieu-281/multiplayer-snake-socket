@@ -31,8 +31,8 @@ void *connection_handler(int *client_socket)
 		}
 		else if(strcmp(arr[0], "2") == 0)
 		{
-			int check = checkSignIn(arr[1], arr[2], socket);
-			if (check == -1)
+			int check = checkSignUp(arr[1], arr[2], socket);
+			if (check)
 			{
 				addUser(arr[1], arr[2]);
 				writeUserToFile();
@@ -83,6 +83,7 @@ void *connection_handler(int *client_socket)
 				}
 			}
 		}
+		freeMemory(arr, count);
 	}
 	return 0;
 }

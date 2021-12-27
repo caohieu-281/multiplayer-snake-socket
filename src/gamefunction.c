@@ -125,6 +125,7 @@ void ShowProfile(int sockfd)
     printf("|     Username: %-21s             |\n", arr[0]);
     printf("|     Password: %-21s             |\n", arr[1]);
     printf("|_________________________________________________|\n");
+    freeMemory(arr, count);
     if (Back("return", "continue stay here"))
         system("clear");
     else
@@ -136,7 +137,7 @@ int LogOut(int sockfd)
     if (Back("logout", "continue"))
     {
         memset(messageClient, 0, sizeof(messageClient));
-        sprintf(messageClient, "7");
+        sprintf(messageClient, "7 ");
         ClientSendMessageToServer(sockfd);
         ClientReceiveMessageFromServer(sockfd);
         if (strcmp(messageClient, "1") == 0)
