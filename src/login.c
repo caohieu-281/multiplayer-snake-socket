@@ -102,7 +102,7 @@ void LoginGame(int sockfd)
             {
                 system("clear");
                 printf(" _______________Sign in successful!!!_____________\n");
-                PlayGame(sockfd);
+                GameFunction(sockfd);
                 break;
             }
             if (status == 0)

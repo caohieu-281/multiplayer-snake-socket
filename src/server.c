@@ -44,8 +44,8 @@ void *connection_handler(int *client_socket)
 			}
 		}
 
-		// Join room
-		else if (strcmp(arr[0], "3") == 0)
+		// Join waiting-room
+		else if (strcmp(arr[0], "4") == 0)
 		{
 			printf("JoinRoom\n");
 			// Cannot join room cuz max player in room
@@ -77,7 +77,7 @@ void *connection_handler(int *client_socket)
 		}
 
 		// Change Password
-		else if (strcmp(arr[0], "4") == 0)
+		else if (strcmp(arr[0], "5") == 0)
 		{
 			if (strcmp(listUsers[thUserInList].password, arr[1]) == 0)
 			{
@@ -95,7 +95,7 @@ void *connection_handler(int *client_socket)
 		}
 
 		// Show profile
-		else if (strcmp(arr[0], "5") == 0)
+		else if (strcmp(arr[0], "6") == 0)
 		{
 			memset(messageServer, 0, sizeof(messageServer));
 			sprintf(messageServer, "%s %s", listUsers[thUserInList].username, listUsers[thUserInList].password);

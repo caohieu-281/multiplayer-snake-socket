@@ -1,6 +1,6 @@
 #include "init.h"
 
-void PlayGame(int sockfd)
+void GameFunction(int sockfd)
 {
     char choice[MAX_LENGTH];
     do
@@ -8,8 +8,15 @@ void PlayGame(int sockfd)
         ViewFunctionInGameScreen();
         scanf("%s", choice);
         fflush(stdin);
-        // Join room
+        // Create room
         if (strcmp(choice, "1") == 0)
+        {
+            system("clear");
+            CreateRoom(sockfd);
+            printf("----------------------Create Room------------------\n");
+        }
+        // Join waiting-room
+        else if (strcmp(choice, "2") == 0)
         {
             system("clear");
             ViewWelcomeScreen();
@@ -17,12 +24,12 @@ void PlayGame(int sockfd)
             printf("\n_______Let's play________\n\n");
         }
         // Change Password
-        else if (strcmp(choice, "2") == 0)
+        else if (strcmp(choice, "3") == 0)
         {
             system("clear");
             printf("\n _________________Change Password_________________\n\n");
             if (ChangePassword(sockfd))
-                PlayGame(sockfd);
+                GameFunction(sockfd);
             else
             {
                 printf(" ____________Password is not exactly!!!___________\n\n");
@@ -30,19 +37,19 @@ void PlayGame(int sockfd)
             }
         }
         // Show Profile
-        else if (strcmp(choice, "3") == 0)
+        else if (strcmp(choice, "4") == 0)
         {
             system("clear");
             ShowProfile(sockfd);
         }
         // Show leaderboard
-        else if (strcmp(choice, "4") == 0)
+        else if (strcmp(choice, "5") == 0)
         {
             system("clear");
             printf("\n_______This is leaderboard________\n\n");
         }
         // Exit
-        else if (strcmp(choice, "5") == 0)
+        else if (strcmp(choice, "6") == 0)
         {
             system("clear");
             if (LogOut(sockfd))
@@ -51,34 +58,41 @@ void PlayGame(int sockfd)
                 LoginGame(sockfd);
             }
             else
-                PlayGame(sockfd);
+                GameFunction(sockfd);
         }
         else
             printf(" ___________We don't have this choice!!!__________\n\n");
-    } while (choice != 5);
+    } while (choice != 6);
+}
+
+void CreateRoom(int sockfd)
+{
 }
 
 void JoinRoom(int sockfd)
 {
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "3 ");
+    sprintf(messageClient, "4 ");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
     // Cannot join room cuz max player in room
-    if (strcmp(messageClient, "-1") == 0){
-        printf("Cannot join room cuz max player in this room\n\n");
+    if (strcmp(messageClient, "-1") == 0)
+    {
+        printf("\nCannot join room cuz max player in this room\n");
         CountTime("Return play game screen", 5);
         system("clear");
     }
     // Host the room
-    else if(strcmp(messageClient, "0") == 0){
-        printf("You are host of the room, let's start game!\n\n");
+    else if (strcmp(messageClient, "0") == 0)
+    {
+        printf("\nYou are host of the room, let's start game!\n");
         printf("        Press [S] to start game\n");
         printf("        Press [Q] to quit game!\n");
         printf(" Press any key to wait for more players...\n");
     }
     // Player in room
-    else{
+    else
+    {
         printf("\n Game will be started by host\n");
         printf(" Press [Ctr + C] to quit game!\n");
         printf(" Press any key to wait for more players...\n");
@@ -87,9 +101,10 @@ void JoinRoom(int sockfd)
     do
     {
         back = Back("return", "continue stay here");
-        if (back){
+        if (back)
+        {
             system("clear");
-            return PlayGame(sockfd);
+            return GameFunction(sockfd);
         }
     } while (back != 1);
 }
@@ -117,7 +132,7 @@ int ChangePassword(sockfd)
             if (Back("continue change password", "return") == 0)
             {
                 system("clear");
-                PlayGame(sockfd);
+                GameFunction(sockfd);
             }
             else
             {
@@ -129,7 +144,7 @@ int ChangePassword(sockfd)
     } while (check != 1);
 
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "4 %s %s", currentPassword, newPassword);
+    sprintf(messageClient, "5 %s %s", currentPassword, newPassword);
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
 
@@ -161,7 +176,7 @@ int ChangePassword(sockfd)
 void ShowProfile(int sockfd)
 {
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "5 ");
+    sprintf(messageClient, "6 ");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
     char **arr = NULL;

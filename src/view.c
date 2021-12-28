@@ -26,11 +26,12 @@ void ViewLoginScreen()
 void ViewFunctionInGameScreen()
 {
     printf(" _________________________________________________\n");
-    printf("|             => [1]. Join waiting-room           |\n");
-    printf("|             => [2]. Change password             |\n");
-    printf("|             => [3]. Show profile                |\n");
-    printf("|             => [4]. Show leaderboard            |\n");
-    printf("|             => [5]. Log out                     |\n");
+    printf("|             => [1]. Create Room                 |\n");
+    printf("|             => [2]. Join waiting-room           |\n");
+    printf("|             => [3]. Change password             |\n");
+    printf("|             => [4]. Show profile                |\n");
+    printf("|             => [5]. Show leaderboard            |\n");
+    printf("|             => [6]. Log out                     |\n");
     printf("|_________________________________________________|\n");
     printf("Your Choose: ");
 }
