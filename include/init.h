@@ -19,6 +19,7 @@
 #define MESSAGE_MAX 4096
 #define MAX_PLAYER 5
 #define MAX_USER 1000
+#define MAX_ROOM 200
 #define USERNAME_MAX 50
 #define PASSWORD_MAX 50
 #define MAX_LENGTH 1000
@@ -27,20 +28,23 @@
 char messageClient[MESSAGE_MAX];
 char messageServer[MESSAGE_MAX];
 
-typedef struct _User{
+typedef struct _User
+{
     char username[USERNAME_MAX];
     char password[PASSWORD_MAX];
     int socketID;
     int score;
-    int status;  // 0: not signin, 1: signned in
+    int status; // 0: not signin, 1: signned in
 } User;
-
-typedef struct _Room{
-    User usersInRoom[MAX_PLAYER];
-    int numberUsersInRoom;
-    int roomID;
-} Room;
-
-Room oneRoom;
 int numberUsers;
 User listUsers[MAX_USER];
+
+typedef struct _Room
+{
+    User usersInRoom[MAX_PLAYER];
+    int numberUsersInRoom;
+    int roomID; // roomID is socketID of host room
+} Room;
+
+Room listRooms[MAX_ROOM];
+int numberRooms;

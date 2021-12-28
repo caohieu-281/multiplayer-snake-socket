@@ -60,8 +60,9 @@ int string_split(const char *str, char c, char ***arr)
     return count;
 }
 
-void freeMemory(char ***arr, int count) {
-    for(int i = 0; i < count; i++)
+void freeMemory(char ***arr, int count)
+{
+    for (int i = 0; i < count; i++)
     {
         free(arr[i]);
     }
@@ -85,8 +86,8 @@ void readUserFromFile()
         id++;
         int count = string_split(readFile, ' ', &arr);
         for (int i = 0; i < count; i++)
-            if (arr[i][strlen(arr[i])-1] == '\n')
-                arr[i][strlen(arr[i])-1] = 0;
+            if (arr[i][strlen(arr[i]) - 1] == '\n')
+                arr[i][strlen(arr[i]) - 1] = 0;
 
         strcpy(listUsers[id].username, arr[0]);
         strcpy(listUsers[id].password, arr[1]);
@@ -104,9 +105,10 @@ int checkSignIn(char *username, char *password, int socket)
     {
         if (strcmp(username, listUsers[i].username) == 0)
         {
-            if (strcmp(password, listUsers[i].password) == 0){
+            if (strcmp(password, listUsers[i].password) == 0)
+            {
                 listUsers[i].status = 1;
-                listUsers[i].socketID = socket;                
+                listUsers[i].socketID = socket;
                 return 1;
             }
             else
@@ -154,23 +156,59 @@ void writeUserToFile()
     fclose(fin);
 }
 
+// Search th user in listUser with sockfd and status
+int SearchUser(User listUsers[], int sockfd, int status)
+{
+    for (int i = 0; i < numberUsers; i++)
+        if (listUsers[i].socketID == sockfd && listUsers[i].status == status)
+            return i;
+    return -1;
+}
+
+// Search th room in listRoom, return th room in list
+int SearchRoom(int roomID)
+{
+    for (int i = 0; i < numberRooms; i++)
+        if (listRooms[i].roomID == roomID)
+            return i;
+    return -1;
+}
+
+// Delete room
+void DeleteRoom(int roomID)
+{
+    int thRoom = SearchRoom(roomID);
+    for (int i = thRoom; i < numberRooms - 1; i++)
+    {
+        for (int j = 0; j < listRooms[i + 1].numberUsersInRoom; j++)
+        {
+            strcpy(listRooms[i].usersInRoom[j].password, listRooms[i + 1].usersInRoom[j].password);
+            strcpy(listRooms[i].usersInRoom[j].username, listRooms[i + 1].usersInRoom[j].username);
+            listRooms[i].usersInRoom[j].socketID = listRooms[i + 1].usersInRoom[j].socketID;
+            listRooms[i].usersInRoom[j].score = listRooms[i + 1].usersInRoom[j].score;
+            listRooms[i].usersInRoom[j].status = listRooms[i + 1].usersInRoom[j].status;
+        }
+        listRooms[i].numberUsersInRoom = listRooms[i + 1].numberUsersInRoom;
+        listRooms[i].roomID = listRooms[i + 1].roomID;
+    }
+    numberRooms--;
+}
+
+void UserOutRoom(int roomID, int userID)
+{
+    
+}
+// Countdown time to do something
+void CountTime(char *message, int time)
+{
+    for (int i = time; i > 0; i--)
+    {
+        printf("%s in %ds\n", message, i);
+        sleep(1);
+    }
+}
 
 void sortScore()
 {
     return;
-}
-
-// Search user in listUser with sockfd and status
-int SearchUser(User listUsers[], int sockfd, int status){
-    for (int i = 0; i < numberUsers; i++)
-        if (listUsers[i].socketID == sockfd && listUsers[i].status == status)
-            return i;
-}
-
-// Countdown time to do something
-void CountTime(char *message, int time){
-    for(int i=time;i>0;i--){
-        printf("%s in %ds\n", message, i);
-        sleep(1);
-    }
 }

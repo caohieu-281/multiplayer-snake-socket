@@ -44,35 +44,71 @@ void *connection_handler(int *client_socket)
 			}
 		}
 
+		// Create room
+		else if (strcmp(arr[0], "3") == 0)
+		{
+			// Cannot create room cuz max room
+			if (numberRooms == MAX_ROOM)
+			{
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "0 ");
+				ServerSendToClient(socket);
+			}
+			// Create success
+			else
+			{
+				int roomID = listUsers[thUserInList].socketID;
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "1 %d", roomID);
+				ServerSendToClient(socket);
+				strcpy(listRooms[numberRooms].usersInRoom[0].password, listUsers[thUserInList].password);
+				strcpy(listRooms[numberRooms].usersInRoom[0].username, listUsers[thUserInList].username);
+				listRooms[numberRooms].usersInRoom[0].socketID = roomID;
+				listRooms[numberRooms].usersInRoom[0].score = listUsers[thUserInList].score;
+				listRooms[numberRooms].usersInRoom[0].status = listUsers[thUserInList].status;
+				listRooms[numberRooms].numberUsersInRoom = 1;
+				listRooms[numberRooms].roomID = roomID;
+				numberRooms++;
+				for (int i=0;i<numberRooms;i++){
+					printf("room id %d\n", listRooms[i].roomID);
+					printf("number room %d\n", listRooms[i].numberUsersInRoom);
+				}
+			}
+		}
+
 		// Join waiting-room
 		else if (strcmp(arr[0], "4") == 0)
 		{
-			printf("JoinRoom\n");
-			// Cannot join room cuz max player in room
-			if(oneRoom.numberUsersInRoom == MAX_PLAYER){
+			int thRoom = SearchRoom(atoi(arr[1]));
+
+			// Room not exist
+			if (thRoom == -1)
+			{
 				memset(messageServer, 0, sizeof(messageServer));
-				sprintf(messageServer, "-1");
+				sprintf(messageServer, "-2");
 				ServerSendToClient(socket);
 			}
-			else{
-				// Host the room
-				if(oneRoom.numberUsersInRoom == 0){
-					printf("aaaa\n");
+			else
+			{
+				// Cannot join room cuz max player in room
+				if (listRooms[thRoom].numberUsersInRoom == MAX_PLAYER)
+				{
 					memset(messageServer, 0, sizeof(messageServer));
-					sprintf(messageServer, "0");
+					sprintf(messageServer, "-1");
+					ServerSendToClient(socket);
 				}
-				// Player in room
-				else{
+				else
+				{
 					memset(messageServer, 0, sizeof(messageServer));
 					sprintf(messageServer, "1");
+					ServerSendToClient(socket);
+					strcpy(listRooms[thRoom].usersInRoom[listRooms[thRoom].numberUsersInRoom].password, listUsers[thUserInList].password);
+					strcpy(listRooms[thRoom].usersInRoom[listRooms[thRoom].numberUsersInRoom].username, listUsers[thUserInList].username);
+					listRooms[thRoom].usersInRoom[listRooms[thRoom].numberUsersInRoom].socketID = listUsers[thUserInList].socketID;
+					listRooms[thRoom].usersInRoom[listRooms[thRoom].numberUsersInRoom].score = listUsers[thUserInList].score;
+					listRooms[thRoom].usersInRoom[listRooms[thRoom].numberUsersInRoom].status = listUsers[thUserInList].status;
+					listRooms[thRoom].numberUsersInRoom++;
 				}
-				ServerSendToClient(socket);
-				strcpy(oneRoom.usersInRoom[oneRoom.numberUsersInRoom].password, listUsers[thUserInList].password);
-				strcpy(oneRoom.usersInRoom[oneRoom.numberUsersInRoom].username, listUsers[thUserInList].username);
-				oneRoom.usersInRoom[oneRoom.numberUsersInRoom].socketID = listUsers[thUserInList].socketID;
-				oneRoom.usersInRoom[oneRoom.numberUsersInRoom].score = listUsers[thUserInList].score;
-				oneRoom.usersInRoom[oneRoom.numberUsersInRoom].status = listUsers[thUserInList].status;
-				oneRoom.numberUsersInRoom++;
 			}
 		}
 
