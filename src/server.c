@@ -69,7 +69,8 @@ void *connection_handler(int *client_socket)
 				listRooms[numberRooms].numberUsersInRoom = 1;
 				listRooms[numberRooms].roomID = roomID;
 				numberRooms++;
-				for (int i=0;i<numberRooms;i++){
+				for (int i = 0; i < numberRooms; i++)
+				{
 					printf("room id %d\n", listRooms[i].roomID);
 					printf("number room %d\n", listRooms[i].numberUsersInRoom);
 				}
@@ -145,6 +146,12 @@ void *connection_handler(int *client_socket)
 			memset(messageServer, 0, sizeof(messageServer));
 			sprintf(messageServer, "1");
 			ServerSendToClient(socket);
+		}
+
+		// Out room
+		else if (strcmp(arr[0], "10") == 0)
+		{
+			UserOutRoom(atoi(arr[1]), socket);
 		}
 		freeMemory(arr, count);
 	}

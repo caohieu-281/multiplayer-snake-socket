@@ -196,7 +196,38 @@ void DeleteRoom(int roomID)
 
 void UserOutRoom(int roomID, int userID)
 {
-    
+    int thRoom = SearchRoom(roomID);
+    // If host out room -> Out all player in room
+    if (listRooms[thRoom].roomID == userID)
+    {
+        printf("number in rooom %d\n", listRooms[thRoom].numberUsersInRoom);
+        for (int i = 0; i < listRooms[thRoom].numberUsersInRoom; i++)
+        {
+            // -1: Let out the room
+            memset(messageServer, 0, sizeof(messageServer));
+            sprintf(messageServer, "-1");
+            ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
+        }
+        DeleteRoom(roomID);
+    }
+    // If player in room (not host)
+    else
+    {
+        memset(messageServer, 0, sizeof(messageServer));
+        sprintf(messageServer, "-1");
+        ServerSendToClient(userID);
+        int thUserInRoom = SearchUser(listRooms[thRoom].usersInRoom, userID, 1);
+        for (int i = thUserInRoom; i < listRooms[thRoom].numberUsersInRoom - 1; i++)
+        {
+            strcpy(listRooms[thRoom].usersInRoom[i].password, listRooms[thRoom].usersInRoom[i+1].password);
+            strcpy(listRooms[thRoom].usersInRoom[i].username, listRooms[thRoom].usersInRoom[i+1].username);
+            listRooms[thRoom].usersInRoom[i].socketID = listRooms[thRoom].usersInRoom[i+1].socketID;
+            listRooms[thRoom].usersInRoom[i].score = listRooms[thRoom].usersInRoom[i+1].score;
+            listRooms[thRoom].usersInRoom[i].status = listRooms[thRoom].usersInRoom[i+1].status;
+        }
+        listRooms[thRoom].numberUsersInRoom--;
+        printf("number in room %d\n", listRooms[thRoom].numberUsersInRoom);
+    }
 }
 // Countdown time to do something
 void CountTime(char *message, int time)

@@ -4,7 +4,8 @@
         "socket.h": "c",
         "stdlib.h": "c",
         "init.h": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "inet.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
