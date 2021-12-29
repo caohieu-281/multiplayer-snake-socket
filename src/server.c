@@ -149,23 +149,46 @@ void *connection_handler(int *client_socket)
 			ServerSendToClient(socket);
 		}
 
-		// Out room
-		else if (strcmp(arr[0], "10") == 0)
-		{
-			UserOutRoom(atoi(arr[1]), socket);
+		// // Out room
+		// else if (strcmp(arr[0], "10") == 0)
+		// {
+		// 	UserOutRoom(atoi(arr[1]), socket);
+		// }
+		// Show list room
+		else if(strcmp(arr[0], "13") == 0){
+			if(numberRooms == 0){
+				printf("No room\n");
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "-3 ");
+				ServerSendToClient(socket);
+			}
+			else{
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "13 %d", numberRooms);
+				for(int i=0;i<numberRooms;i++){
+					sprintf(messageServer, "%s %d %d", messageServer, listRooms[i].roomID, listRooms[i].numberUsersInRoom);
+				}
+				ServerSendToClient(socket);
+			}
 		}
-
 		// Refresh Screen Waiting Room
 		else if (strcmp(arr[0], "14") == 0){
 			RefreshScreenWaitingRoom(atoi(arr[1]));
 		}
 		// > 15 is in game play
+		// Play game or out game
 		else if (strcmp(arr[0], "15") == 0){
 			if(strcasecmp(arr[2], "s") == 0){
 				memset(messageServer, 0, sizeof(messageServer));
 				sprintf(messageServer, "start");
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
+			}
+			if(strcasecmp(arr[2], "q") == 0){
+				UserOutRoom(atoi(arr[1]), socket);
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "quit");
+				ServerSendToClient(socket);
 			}
 		}
 		freeMemory(arr, count);
@@ -176,6 +199,7 @@ void *connection_handler(int *client_socket)
 int main(int argc, char *argv[])
 {
 	readUserFromFile();
+	numberRooms = 0;
 	int server_socket = ServerCreateSocket(atoi(argv[1]));
 	int no_threads = 0;
 	

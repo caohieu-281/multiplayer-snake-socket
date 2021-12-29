@@ -85,128 +85,156 @@ void CreateRoom(int sockfd)
     {
         int play = 0;
         char command[MAX_LENGTH];
-        do{
+        do
+        {
             printf("\n           Room Id: %s\n", arr[1]);
             printf("You are host of the room, let's start game!\n");
             printf("        Press [S] to start game\n");
-            printf("        Press [Q] to quit game!\n");
+            printf("        Press [Q] to quit game, return main screen!\n");
             printf("====>");
             scanf("%s", command);
             memset(messageClient, 0, sizeof(messageClient));
             sprintf(messageClient, "15 %s %s", arr[1], command);
             ClientSendMessageToServer(sockfd);
             ClientReceiveMessageFromServer(sockfd);
-            if(strcmp(messageClient, "start") == 0){
+            if (strcmp(messageClient, "start") == 0)
+            {
                 play = 1;
                 return InGamePlay(sockfd);
             }
-            
-        }while(play != 1);
+            else if(strcmp(messageClient, "quit") == 0){
+                system("clear");
+                return GameFunction(sockfd);
+            }
+
+        } while (play != 1);
     }
-    
-    int back = 0;
-    do
-    {
-        back = Back("return", "continue stay here");
-        if (back)
-        {
-            system("clear");
-            memset(messageClient, 0, sizeof(messageClient));
-            sprintf(messageClient, "10 %s", arr[1]);
-            ClientSendMessageToServer(sockfd);
-            ClientReceiveMessageFromServer(sockfd);
-            return GameFunction(sockfd);
-        }
-    } while (back != 1);
+
+    // int back = 0;
+    // do
+    // {
+    //     back = Back("return", "continue stay here");
+    //     if (back)
+    //     {
+    //         system("clear");
+    //         memset(messageClient, 0, sizeof(messageClient));
+    //         sprintf(messageClient, "10 %s", arr[1]);
+    //         ClientSendMessageToServer(sockfd);
+    //         ClientReceiveMessageFromServer(sockfd);
+    //         return GameFunction(sockfd);
+    //     }
+    // } while (back != 1);
 }
 
-void InGamePlay(int sockfd){
+void InGamePlay(int sockfd)
+{
     printf("Playing game\n");
 }
 
 void JoinRoom(int sockfd)
 {
-    char inputRoomID[MAX_LENGTH];
-
-    printf("Input room id to join room: ");
-    scanf("%s", inputRoomID);
     memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "4 %s", inputRoomID);
+    sprintf(messageClient, "13 ");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    // Room not exist
-    if (strcmp(messageClient, "-2") == 0)
+    char **lsRoom = NULL;
+    int countRoom = string_split(messageClient, ' ', &lsRoom);
+    if (strcmp(lsRoom[0], "-3") == 0)
     {
-        printf("\nRoomID is not exist\n");
-        CountTime("Return play game screen", 4);
+        printf("\nNo room exist\n");
+        CountTime("Return play game screen to create room", 4);
         system("clear");
+        return GameFunction(sockfd);
     }
-    // Cannot join room cuz max player in room
-    else if (strcmp(messageClient, "-1") == 0)
-    {
-        printf("\nCannot join room cuz max player in this room\n");
-        CountTime("Return play game screen", 5);
-        system("clear");
-    }
-    // Player in room
     else
     {
-        memset(messageClient, 0, sizeof(messageClient));
-        sprintf(messageClient, "14 %s", inputRoomID);
-        ClientSendMessageToServer(sockfd);
-        // printf("\n Game will be started by host\n");
-        // printf(" Press [Ctr + C] to quit game!\n");
-        // printf(" Press any key to wait for more players...\n");
-        
-        //// Tu thoat
-        // int back = 0;
-        // do
-        // {
-        //     back = Back("return", "continue stay here");
-        //     if (back)
-        //     {
-        //         system("clear");
-        //         memset(messageClient, 0, sizeof(messageClient));
-        //         sprintf(messageClient, "10 ");
-        //         ClientSendMessageToServer(sockfd);
-        //         return GameFunction(sockfd);
-        //     }
-        // } while (back != 1);
-
-        // Waiting mess from server to do something after
-        int recvBytes;
-        // Cho
-        while ((recvBytes = recv(sockfd, messageClient, MESSAGE_MAX, 0)) > 0)
+        printf("\nNumber room %s\n", lsRoom[1]);
+        for (int i = 1; i <= atoi(lsRoom[1]); i++)
         {
-            messageClient[recvBytes] = 0;
-            char **arr = NULL;
-            int count = string_split(messageClient, ' ', &arr);
-            if (strcmp(messageClient, "-1") == 0)
-            {
-                printf("\nHost out room so you must out the room\n");
-                CountTime("Return play game screen", 5);
-                system("clear");
-                return GameFunction(sockfd);
-            }
-            else if(strcmp(messageClient, "14")){
-                system("clear");
-                ViewWelcomeScreen();
-                printf("\n_____________Room Id: %s_____________\n", inputRoomID);
-                for(int i = 1; i<=atoi(arr[1]); i++){
-                    printf("%s. %s\n", arr[2*i], arr[2*i+1]);
-                }
-                printf("_____________________________________\n");
-                printf("\n Game will be started by host\n");
-                printf(" Press [Ctr + C] to quit game!\n");
-            }
+            printf("Room %s have %s players in room\n", lsRoom[2 * i], lsRoom[2 * i + 1]);
+        }
+        char inputRoomID[MAX_LENGTH];
+        printf("Input room id to join room: ");
+        scanf("%s", inputRoomID);
+        memset(messageClient, 0, sizeof(messageClient));
+        sprintf(messageClient, "4 %s", inputRoomID);
+        ClientSendMessageToServer(sockfd);
+        ClientReceiveMessageFromServer(sockfd);
+        // Room not exist
+        if (strcmp(messageClient, "-2") == 0)
+        {
+            printf("\nRoomID is not exist\n");
+            CountTime("Return play game screen", 4);
+            system("clear");
+        }
+        // Cannot join room cuz max player in room
+        else if (strcmp(messageClient, "-1") == 0)
+        {
+            printf("\nCannot join room cuz max player in this room\n");
+            CountTime("Return play game screen", 5);
+            system("clear");
+        }
+        // Player in room
+        else
+        {
+            memset(messageClient, 0, sizeof(messageClient));
+            sprintf(messageClient, "14 %s", inputRoomID);
+            ClientSendMessageToServer(sockfd);
+            // printf("\n Game will be started by host\n");
+            // printf(" Press [Ctr + C] to quit game!\n");
+            // printf(" Press any key to wait for more players...\n");
 
-            else if (strcmp(messageClient, "15") == 0)
+            //// Tu thoat
+            // int back = 0;
+            // do
+            // {
+            //     back = Back("return", "continue stay here");
+            //     if (back)
+            //     {
+            //         system("clear");
+            //         memset(messageClient, 0, sizeof(messageClient));
+            //         sprintf(messageClient, "10 ");
+            //         ClientSendMessageToServer(sockfd);
+            //         return GameFunction(sockfd);
+            //     }
+            // } while (back != 1);
+
+            // Waiting mess from server to do something after
+            int recvBytes;
+            // Cho
+            while ((recvBytes = recv(sockfd, messageClient, MESSAGE_MAX, 0)) > 0)
             {
-                InGamePlay(sockfd);
-                break;
+                messageClient[recvBytes] = 0;
+                char **arr = NULL;
+                int count = string_split(messageClient, ' ', &arr);
+                if (strcmp(arr[0], "-1") == 0)
+                {
+                    printf("\nHost out room so you must out the room\n");
+                    CountTime("Return play game screen", 5);
+                    system("clear");
+                    return GameFunction(sockfd);
+                }
+                else if (strcmp(arr[0], "14") == 0)
+                {
+                    system("clear");
+                    ViewWelcomeScreen();
+                    printf("\n_____________Room Id: %s_____________\n", inputRoomID);
+                    for (int i = 1; i <= atoi(arr[1]); i++)
+                    {
+                        printf("%s. %s\n", arr[2 * i], arr[2 * i + 1]);
+                    }
+                    printf("_____________________________________\n");
+                    printf("\n Game will be started by host\n");
+                    printf(" Press [Ctr + C] to quit game!\n");
+                }
+                else if (strcmp(arr[0], "15") == 0)
+                {
+                    printf("hey\n");
+                    InGamePlay(sockfd);
+                    break;
+                }
             }
         }
-        
     }
 }
 
