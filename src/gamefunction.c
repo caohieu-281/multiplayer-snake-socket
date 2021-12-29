@@ -127,6 +127,7 @@ void InGamePlay(int sockfd){
 void JoinRoom(int sockfd)
 {
     char inputRoomID[MAX_LENGTH];
+
     printf("Input room id to join room: ");
     scanf("%s", inputRoomID);
     memset(messageClient, 0, sizeof(messageClient));
@@ -150,9 +151,12 @@ void JoinRoom(int sockfd)
     // Player in room
     else
     {
-        printf("\n Game will be started by host\n");
-        printf(" Press [Ctr + C] to quit game!\n");
-        printf(" Press any key to wait for more players...\n");
+        memset(messageClient, 0, sizeof(messageClient));
+        sprintf(messageClient, "14 %s", inputRoomID);
+        ClientSendMessageToServer(sockfd);
+        // printf("\n Game will be started by host\n");
+        // printf(" Press [Ctr + C] to quit game!\n");
+        // printf(" Press any key to wait for more players...\n");
         
         //// Tu thoat
         // int back = 0;
@@ -169,12 +173,14 @@ void JoinRoom(int sockfd)
         //     }
         // } while (back != 1);
 
-        // Host thoat
+        // Waiting mess from server to do something after
         int recvBytes;
         // Cho
         while ((recvBytes = recv(sockfd, messageClient, MESSAGE_MAX, 0)) > 0)
         {
             messageClient[recvBytes] = 0;
+            char **arr = NULL;
+            int count = string_split(messageClient, ' ', &arr);
             if (strcmp(messageClient, "-1") == 0)
             {
                 printf("\nHost out room so you must out the room\n");
@@ -182,12 +188,22 @@ void JoinRoom(int sockfd)
                 system("clear");
                 return GameFunction(sockfd);
             }
+            else if(strcmp(messageClient, "14")){
+                system("clear");
+                ViewWelcomeScreen();
+                printf("\n_____________Room Id: %s_____________\n", inputRoomID);
+                for(int i = 1; i<=atoi(arr[1]); i++){
+                    printf("%s. %s\n", arr[2*i], arr[2*i+1]);
+                }
+                printf("_____________________________________\n");
+                printf("\n Game will be started by host\n");
+                printf(" Press [Ctr + C] to quit game!\n");
+            }
+
             else if (strcmp(messageClient, "15") == 0)
             {
-                printf("\nPlaying game now\n");
-                CountTime("Return play game screen", 5);
-                system("clear");
-                return GameFunction(sockfd);
+                InGamePlay(sockfd);
+                break;
             }
         }
         

@@ -98,6 +98,7 @@ void *connection_handler(int *client_socket)
 					sprintf(messageServer, "-1");
 					ServerSendToClient(socket);
 				}
+				// Join room successful
 				else
 				{
 					memset(messageServer, 0, sizeof(messageServer));
@@ -152,6 +153,11 @@ void *connection_handler(int *client_socket)
 		else if (strcmp(arr[0], "10") == 0)
 		{
 			UserOutRoom(atoi(arr[1]), socket);
+		}
+
+		// Refresh Screen Waiting Room
+		else if (strcmp(arr[0], "14") == 0){
+			RefreshScreenWaitingRoom(atoi(arr[1]));
 		}
 		// > 15 is in game play
 		else if (strcmp(arr[0], "15") == 0){

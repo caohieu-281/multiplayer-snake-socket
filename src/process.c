@@ -194,7 +194,8 @@ void DeleteRoom(int roomID)
     numberRooms--;
 }
 
-void MakeGame(int roomID){
+void MakeGame(int roomID)
+{
     int thRoom = SearchRoom(roomID);
     for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
     {
@@ -230,16 +231,30 @@ void UserOutRoom(int roomID, int userID)
         int thUserInRoom = SearchUser(listRooms[thRoom].usersInRoom, userID, 1);
         for (int i = thUserInRoom; i < listRooms[thRoom].numberUsersInRoom - 1; i++)
         {
-            strcpy(listRooms[thRoom].usersInRoom[i].password, listRooms[thRoom].usersInRoom[i+1].password);
-            strcpy(listRooms[thRoom].usersInRoom[i].username, listRooms[thRoom].usersInRoom[i+1].username);
-            listRooms[thRoom].usersInRoom[i].socketID = listRooms[thRoom].usersInRoom[i+1].socketID;
-            listRooms[thRoom].usersInRoom[i].score = listRooms[thRoom].usersInRoom[i+1].score;
-            listRooms[thRoom].usersInRoom[i].status = listRooms[thRoom].usersInRoom[i+1].status;
+            strcpy(listRooms[thRoom].usersInRoom[i].password, listRooms[thRoom].usersInRoom[i + 1].password);
+            strcpy(listRooms[thRoom].usersInRoom[i].username, listRooms[thRoom].usersInRoom[i + 1].username);
+            listRooms[thRoom].usersInRoom[i].socketID = listRooms[thRoom].usersInRoom[i + 1].socketID;
+            listRooms[thRoom].usersInRoom[i].score = listRooms[thRoom].usersInRoom[i + 1].score;
+            listRooms[thRoom].usersInRoom[i].status = listRooms[thRoom].usersInRoom[i + 1].status;
         }
         listRooms[thRoom].numberUsersInRoom--;
-        printf("number in room %d\n", listRooms[thRoom].numberUsersInRoom);
     }
-    
+}
+
+void RefreshScreenWaitingRoom(int roomID)
+{
+    int thRoom = SearchRoom(roomID);
+    int numberInRoom = listRooms[thRoom].numberUsersInRoom;
+    char inforPlayerInRoom[MAX_LENGTH];
+    sprintf(inforPlayerInRoom, "%d %s", 1, listRooms[thRoom].usersInRoom[0].username);
+    for (int i=1;i<listRooms[thRoom].numberUsersInRoom;i++){
+        sprintf(inforPlayerInRoom, "%s %d %s", inforPlayerInRoom, i+1, listRooms[thRoom].usersInRoom[i].username);
+    }
+    for (int i=1;i<listRooms[thRoom].numberUsersInRoom;i++){
+        memset(messageServer, 0, sizeof(messageServer));
+        sprintf(messageServer, "14 %d %s", numberInRoom, inforPlayerInRoom);
+        ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);   
+    }
 }
 // Countdown time to do something
 void CountTime(char *message, int time)
