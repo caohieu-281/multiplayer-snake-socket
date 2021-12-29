@@ -35,7 +35,7 @@ typedef struct _User
     char password[PASSWORD_MAX];
     int socketID;
     int score;
-    int status; // 0: not signin, 1: signned in
+    int status; // 0: not sign in, 1: signned in
 } User;
 int numberUsers;
 User listUsers[MAX_USER];

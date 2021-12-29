@@ -194,6 +194,17 @@ void DeleteRoom(int roomID)
     numberRooms--;
 }
 
+void MakeGame(int roomID){
+    int thRoom = SearchRoom(roomID);
+    for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
+    {
+        // -1: Let out the room
+        memset(messageServer, 0, sizeof(messageServer));
+        sprintf(messageServer, "15");
+        ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
+    }
+}
+
 void UserOutRoom(int roomID, int userID)
 {
     int thRoom = SearchRoom(roomID);
@@ -228,6 +239,7 @@ void UserOutRoom(int roomID, int userID)
         listRooms[thRoom].numberUsersInRoom--;
         printf("number in room %d\n", listRooms[thRoom].numberUsersInRoom);
     }
+    
 }
 // Countdown time to do something
 void CountTime(char *message, int time)

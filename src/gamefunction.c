@@ -71,11 +71,8 @@ void CreateRoom(int sockfd)
     sprintf(messageClient, "3 ");
     ClientSendMessageToServer(sockfd);
     ClientReceiveMessageFromServer(sockfd);
-    printf("rec %s\n", messageClient);
     char **arr = NULL;
     int count = string_split(messageClient, ' ', &arr);
-    for (int i = 0; i < count; i++)
-        printf("arr %s\n", arr[i]);
     // Cannot create room cuz max room
     if (strcmp(arr[0], "0") == 0)
     {
@@ -86,12 +83,27 @@ void CreateRoom(int sockfd)
     // Create success
     else
     {
-        printf("\n           Room Id: %s\n", arr[1]);
-        printf("You are host of the room, let's start game!\n");
-        printf("        Press [S] to start game\n");
-        printf("        Press [Q] to quit game!\n");
-        printf(" Press any key to wait for more players...\n");
+        int play = 0;
+        char command[MAX_LENGTH];
+        do{
+            printf("\n           Room Id: %s\n", arr[1]);
+            printf("You are host of the room, let's start game!\n");
+            printf("        Press [S] to start game\n");
+            printf("        Press [Q] to quit game!\n");
+            printf("====>");
+            scanf("%s", command);
+            memset(messageClient, 0, sizeof(messageClient));
+            sprintf(messageClient, "15 %s %s", arr[1], command);
+            ClientSendMessageToServer(sockfd);
+            ClientReceiveMessageFromServer(sockfd);
+            if(strcmp(messageClient, "start") == 0){
+                play = 1;
+                return InGamePlay(sockfd);
+            }
+            
+        }while(play != 1);
     }
+    
     int back = 0;
     do
     {
@@ -106,6 +118,10 @@ void CreateRoom(int sockfd)
             return GameFunction(sockfd);
         }
     } while (back != 1);
+}
+
+void InGamePlay(int sockfd){
+    printf("Playing game\n");
 }
 
 void JoinRoom(int sockfd)
@@ -137,7 +153,8 @@ void JoinRoom(int sockfd)
         printf("\n Game will be started by host\n");
         printf(" Press [Ctr + C] to quit game!\n");
         printf(" Press any key to wait for more players...\n");
-        // Tu thoat
+        
+        //// Tu thoat
         // int back = 0;
         // do
         // {
@@ -154,9 +171,9 @@ void JoinRoom(int sockfd)
 
         // Host thoat
         int recvBytes;
+        // Cho
         while ((recvBytes = recv(sockfd, messageClient, MESSAGE_MAX, 0)) > 0)
         {
-            printf("hahaah\n");
             messageClient[recvBytes] = 0;
             if (strcmp(messageClient, "-1") == 0)
             {
@@ -165,7 +182,15 @@ void JoinRoom(int sockfd)
                 system("clear");
                 return GameFunction(sockfd);
             }
+            else if (strcmp(messageClient, "15") == 0)
+            {
+                printf("\nPlaying game now\n");
+                CountTime("Return play game screen", 5);
+                system("clear");
+                return GameFunction(sockfd);
+            }
         }
+        
     }
 }
 

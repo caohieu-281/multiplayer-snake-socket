@@ -153,6 +153,15 @@ void *connection_handler(int *client_socket)
 		{
 			UserOutRoom(atoi(arr[1]), socket);
 		}
+		// > 15 is in game play
+		else if (strcmp(arr[0], "15") == 0){
+			if(strcasecmp(arr[2], "s") == 0){
+				memset(messageServer, 0, sizeof(messageServer));
+				sprintf(messageServer, "start");
+				ServerSendToClient(socket);
+				MakeGame(atoi(arr[1]));
+			}
+		}
 		freeMemory(arr, count);
 	}
 	return 0;
@@ -163,6 +172,7 @@ int main(int argc, char *argv[])
 	readUserFromFile();
 	int server_socket = ServerCreateSocket(atoi(argv[1]));
 	int no_threads = 0;
+	
 	pthread_t threads[MAX_USER];
 	while (no_threads < MAX_USER)
 	{
