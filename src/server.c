@@ -186,9 +186,6 @@ void *connection_handler(int *client_socket)
 			}
 			if(strcasecmp(arr[2], "q") == 0){
 				UserOutRoom(atoi(arr[1]), socket);
-				memset(messageServer, 0, sizeof(messageServer));
-				sprintf(messageServer, "quit");
-				ServerSendToClient(socket);
 			}
 		}
 		freeMemory(arr, count);

@@ -7,4 +7,6 @@ Hay nên logout nick đang đăng nhập chỗ khác?
 
 3. signup liên tục 2 lần thì sẽ lỗi, lỗi ghi vào file : done
 
-4. Liên tục join room r out room sẽ khiến số ng trong room max. Vì lúc back chưa truyền thông điệp
+4. Liên tục join room r out room sẽ khiến số ng trong room max. Vì lúc back chưa truyền thông điệp : done
+
+5, Người chơi (ko phải trưởng phòng) không thoát đc room. Vì không thể gửi nhận cùng lúc (giải quyết: tạo 2 thread)

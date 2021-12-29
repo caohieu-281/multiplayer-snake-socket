@@ -212,7 +212,6 @@ void UserOutRoom(int roomID, int userID)
     // If host out room -> Out all player in room
     if (listRooms[thRoom].roomID == userID)
     {
-        printf("number in rooom %d\n", listRooms[thRoom].numberUsersInRoom);
         for (int i = 0; i < listRooms[thRoom].numberUsersInRoom; i++)
         {
             // -1: Let out the room
@@ -254,15 +253,6 @@ void RefreshScreenWaitingRoom(int roomID)
         memset(messageServer, 0, sizeof(messageServer));
         sprintf(messageServer, "14 %d %s", numberInRoom, inforPlayerInRoom);
         ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);   
-    }
-}
-// Countdown time to do something
-void CountTime(char *message, int time)
-{
-    for (int i = time; i > 0; i--)
-    {
-        printf("%s in %ds\n", message, i);
-        sleep(1);
     }
 }
 
