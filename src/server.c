@@ -1,5 +1,8 @@
 #include "init.h"
 
+pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
+int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
+
 void *connection_handler(int *client_socket)
 {
 	int socket = *(int *)client_socket;
@@ -155,41 +158,93 @@ void *connection_handler(int *client_socket)
 		// 	UserOutRoom(atoi(arr[1]), socket);
 		// }
 		// Show list room
-		else if(strcmp(arr[0], "13") == 0){
-			if(numberRooms == 0){
+		else if (strcmp(arr[0], "13") == 0)
+		{
+			if (numberRooms == 0)
+			{
 				printf("No room\n");
 				memset(messageServer, 0, sizeof(messageServer));
 				sprintf(messageServer, "-3 ");
 				ServerSendToClient(socket);
 			}
-			else{
+			else
+			{
 				memset(messageServer, 0, sizeof(messageServer));
 				sprintf(messageServer, "13 %d", numberRooms);
-				for(int i=0;i<numberRooms;i++){
+				for (int i = 0; i < numberRooms; i++)
+				{
 					sprintf(messageServer, "%s %d %d", messageServer, listRooms[i].roomID, listRooms[i].numberUsersInRoom);
 				}
 				ServerSendToClient(socket);
 			}
 		}
 		// Refresh Screen Waiting Room
-		else if (strcmp(arr[0], "14") == 0){
+		else if (strcmp(arr[0], "14") == 0)
+		{
 			RefreshScreenWaitingRoom(atoi(arr[1]));
 		}
 		// > 15 is in game play
 		// Play game or out game
-		else if (strcmp(arr[0], "15") == 0){
-			if(strcasecmp(arr[2], "s") == 0){
+		else if (strcmp(arr[0], "15") == 0)
+		{
+			if (strcasecmp(arr[2], "s") == 0)
+			{
 				memset(messageServer, 0, sizeof(messageServer));
 				sprintf(messageServer, "start");
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
+				break;
 			}
-			if(strcasecmp(arr[2], "q") == 0){
+			if (strcasecmp(arr[2], "q") == 0)
+			{
 				UserOutRoom(atoi(arr[1]), socket);
 			}
 		}
 		freeMemory(arr, count);
 	}
+
+	int i;
+	// MakeGame(atoi(arr[1]));
+	//Set game borders
+	for (i = 0; i < HEIGHT; i++)
+		game_map[i][0] = game_map[i][WIDTH - 2] = BORDER;
+	for (i = 0; i < WIDTH; i++)
+		game_map[0][i] = game_map[HEIGHT - 1][i] = BORDER;
+
+	//Randomly add five fruit
+	srand(time(NULL));
+	for (i = 0; i < 5; i++)
+		AddFruit(map_lock);
+	for (i = 0; i < 3; i++)
+		AddWall(map_lock);
+	for (i = 0; i < 2; i++)
+		AddWall2(map_lock);
+
+	//Find three consecutive zeros in map for starting snake position
+	int head_y, head_x;
+	srand(time(NULL));
+	do
+	{
+		head_y = rand() % (HEIGHT - 6) + 3;
+		head_x = rand() % (WIDTH - 6) + 3;
+	} while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
+
+	//Variables for user input
+	char key = UP;
+	char key_buffer;
+	char map_buffer[map_size];
+	int bytes_sent, n;
+
+	//Copy map to buffer, and send to client
+	memcpy(map_buffer, game_map, map_size);
+	bytes_sent = 0;
+	while (bytes_sent < map_size)
+	{
+		bytes_sent += send(socket, game_map, map_size, 0);
+		if (bytes_sent < 0)
+			error("ERROR writing to socket");
+	}
+
 	return 0;
 }
 
@@ -199,7 +254,7 @@ int main(int argc, char *argv[])
 	numberRooms = 0;
 	int server_socket = ServerCreateSocket(atoi(argv[1]));
 	int no_threads = 0;
-	
+
 	pthread_t threads[MAX_USER];
 	while (no_threads < MAX_USER)
 	{

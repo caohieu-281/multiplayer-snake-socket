@@ -100,10 +100,11 @@ void CreateRoom(int sockfd)
                 sprintf(messageClient, "15 %s %s", arr[1], command);
                 ClientSendMessageToServer(sockfd);
                 ClientReceiveMessageFromServer(sockfd);
-                if (strcmp(messageClient, "start") == 0){
+                if (strcmp(messageClient, "start") == 0)
+                {
                     CountTime("Game will start", 5);
                     system("clear");
-                    return InGamePlay(sockfd);
+                    InGamePlay(sockfd);
                 }
                 else if (strcmp(messageClient, "-1") == 0)
                 {
@@ -115,11 +116,6 @@ void CreateRoom(int sockfd)
             system("clear");
         } while (play != 1);
     }
-}
-
-void InGamePlay(int sockfd)
-{
-    printf("Playing game\n");
 }
 
 void JoinRoom(int sockfd)
@@ -171,9 +167,6 @@ void JoinRoom(int sockfd)
             memset(messageClient, 0, sizeof(messageClient));
             sprintf(messageClient, "14 %s", inputRoomID);
             ClientSendMessageToServer(sockfd);
-            // printf("\n Game will be started by host\n");
-            // printf(" Press [Ctr + C] to quit game!\n");
-            // printf(" Press any key to wait for more players...\n");
 
             //// Tu thoat
             // int back = 0;

@@ -9,12 +9,14 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <assert.h>
+#include <ncurses.h>
 
 #include "socket.h"
 #include "login.h"
 #include "view.h"
 #include "process.h"
 #include "gamefunction.h"
+#include "gameplay.h"
 
 
 #define MESSAGE_MAX 4096
@@ -49,3 +51,44 @@ typedef struct _Room
 
 Room listRooms[MAX_ROOM];
 int numberRooms;
+
+#define HEIGHT      24
+#define WIDTH       80
+#define FRUIT       -111
+#define WALL        -1111
+#define WALL2       -1112
+#define BORDER      -99
+#define REFRESH     0.15
+#define ONGOING     -34
+#define MAX_SNAKE_LENGTH    HEIGHT * WIDTH
+#define UP_KEY              'W'
+#define DOWN_KEY            'S'
+#define LEFT_KEY            'A'
+#define RIGHT_KEY           'D'
+#define INTERRUPTED -30
+
+// int game_result = ONGOING;
+WINDOW* win;
+int game_map[HEIGHT+10][WIDTH+10];
+
+//Direction key types
+typedef enum{
+    UP    = UP_KEY, 
+    DOWN  = DOWN_KEY, 
+    LEFT  = LEFT_KEY, 
+    RIGHT = RIGHT_KEY
+} direction;
+
+typedef struct{
+    int x, y;
+    direction d;
+} coordinate;
+
+typedef struct{
+    int player_no, length;
+    coordinate head;
+    coordinate body_segment[MAX_SNAKE_LENGTH - 2];
+    coordinate tail;
+} snake;
+
+char key_buffer;

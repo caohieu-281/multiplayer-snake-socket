@@ -246,14 +246,73 @@ void RefreshScreenWaitingRoom(int roomID)
     int numberInRoom = listRooms[thRoom].numberUsersInRoom;
     char inforPlayerInRoom[MAX_LENGTH];
     sprintf(inforPlayerInRoom, "%d %s", 1, listRooms[thRoom].usersInRoom[0].username);
-    for (int i=1;i<listRooms[thRoom].numberUsersInRoom;i++){
-        sprintf(inforPlayerInRoom, "%s %d %s", inforPlayerInRoom, i+1, listRooms[thRoom].usersInRoom[i].username);
+    for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
+    {
+        sprintf(inforPlayerInRoom, "%s %d %s", inforPlayerInRoom, i + 1, listRooms[thRoom].usersInRoom[i].username);
     }
-    for (int i=1;i<listRooms[thRoom].numberUsersInRoom;i++){
+    for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
+    {
         memset(messageServer, 0, sizeof(messageServer));
         sprintf(messageServer, "14 %d %s", numberInRoom, inforPlayerInRoom);
-        ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);   
+        ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
     }
+}
+
+void AddWall(pthread_mutex_t map_lock)
+{
+    int x, y, a;
+    do
+    {
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    pthread_mutex_lock(&map_lock);
+    a = rand() % 10;
+    while (a + y >= HEIGHT || a < 3)
+    {
+        a = rand() % 10;
+    }
+    for (int i = 0; i < a; i++)
+    {
+        if (game_map[y + i][x] == 0)
+            game_map[y + i][x] = WALL;
+    }
+    pthread_mutex_unlock(&map_lock);
+}
+
+void AddWall2(pthread_mutex_t map_lock)
+{
+    int x, y, a;
+    do
+    {
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    pthread_mutex_lock(&map_lock);
+    a = rand() % 10;
+    while (a + x >= WIDTH || a < 3)
+    {
+        a = rand() % 10;
+    }
+    for (int i = 0; i < a; i++)
+    {
+        if (game_map[y][x + i] == 0)
+            game_map[y][x + i] = WALL2;
+    }
+    pthread_mutex_unlock(&map_lock);
+}
+
+void AddFruit(pthread_mutex_t map_lock)
+{
+    int x, y;
+    do
+    {
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    pthread_mutex_lock(&map_lock);
+    game_map[y][x] = FRUIT;
+    pthread_mutex_unlock(&map_lock);
 }
 
 void sortScore()
