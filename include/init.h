@@ -90,5 +90,3 @@ typedef struct{
     coordinate body_segment[MAX_SNAKE_LENGTH - 2];
     coordinate tail;
 } snake;
-
-char key_buffer;

@@ -1,8 +1,5 @@
 #include "init.h"
 
-pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
-int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
-
 void *connection_handler(int *client_socket)
 {
 	int socket = *(int *)client_socket;
@@ -203,47 +200,7 @@ void *connection_handler(int *client_socket)
 		freeMemory(arr, count);
 	}
 
-	int i;
-	// MakeGame(atoi(arr[1]));
-	//Set game borders
-	for (i = 0; i < HEIGHT; i++)
-		game_map[i][0] = game_map[i][WIDTH - 2] = BORDER;
-	for (i = 0; i < WIDTH; i++)
-		game_map[0][i] = game_map[HEIGHT - 1][i] = BORDER;
-
-	//Randomly add five fruit
-	srand(time(NULL));
-	for (i = 0; i < 5; i++)
-		AddFruit(map_lock);
-	for (i = 0; i < 3; i++)
-		AddWall(map_lock);
-	for (i = 0; i < 2; i++)
-		AddWall2(map_lock);
-
-	//Find three consecutive zeros in map for starting snake position
-	int head_y, head_x;
-	srand(time(NULL));
-	do
-	{
-		head_y = rand() % (HEIGHT - 6) + 3;
-		head_x = rand() % (WIDTH - 6) + 3;
-	} while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
-
-	//Variables for user input
-	char key = RIGHT;
-	char key_buffer;
-	char map_buffer[map_size];
-	int bytes_sent, n;
-
-	//Copy map to buffer, and send to client
-	memcpy(map_buffer, game_map, map_size);
-	bytes_sent = 0;
-	while (bytes_sent < map_size)
-	{
-		bytes_sent += send(socket, game_map, map_size, 0);
-		if (bytes_sent < 0)
-			error("ERROR writing to socket");
-	}
+	play_game(socket);
 
 	return 0;
 }
@@ -286,48 +243,3 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void add_wall(){
-    int x, y, a;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand()%10;
-    while(a+y >= HEIGHT || a < 3){
-        a = rand()%10;
-    }
-    for(int i = 0; i < a; i++){
-        if(game_map[y+i][x] == 0)
-            game_map[y+i][x] = WALL;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-
-void add_wall2(){
-    int x, y, a;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand()%10;
-    while(a+x >= WIDTH || a < 3){
-        a = rand()%10;
-    }
-    for(int i = 0; i < a; i++){
-        if(game_map[y][x+i] == 0)
-            game_map[y][x+i] = WALL2;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-void add_fruit(){
-    int x, y;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    game_map[y][x] = FRUIT;
-    pthread_mutex_unlock(&map_lock);
-}

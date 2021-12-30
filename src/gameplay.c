@@ -1,5 +1,7 @@
 #include "init.h"
 
+char key_buffer;
+
 char key = UP_KEY;
 int game_result = ONGOING;
 
