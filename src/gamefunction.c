@@ -104,22 +104,26 @@ void CreateRoom(int sockfd)
                 {
                     CountTime("Game will start", 5);
                     system("clear");
-                    InGamePlay(sockfd);
+                    freeMemory(arr, count);
+                    return InGamePlay(sockfd);
                 }
                 else if (strcmp(messageClient, "-1") == 0)
                 {
                     CountTime("Make other players out room", 3);
                     system("clear");
+                    freeMemory(arr, count);
                     return GameFunction(sockfd);
                 }
             }
             system("clear");
         } while (play != 1);
     }
+    freeMemory(arr, count);
 }
 
 void JoinRoom(int sockfd)
 {
+    // In list room
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "13 ");
     ClientSendMessageToServer(sockfd);
@@ -131,6 +135,7 @@ void JoinRoom(int sockfd)
         printf("\nNo room exist\n");
         CountTime("Return play game screen to create room", 4);
         system("clear");
+        freeMemory(lsRoom, countRoom);
         return GameFunction(sockfd);
     }
     else
@@ -140,6 +145,8 @@ void JoinRoom(int sockfd)
         {
             printf("Room %s have %s players in room\n", lsRoom[2 * i], lsRoom[2 * i + 1]);
         }
+        freeMemory(lsRoom, countRoom);
+        // Select room
         char inputRoomID[MAX_LENGTH];
         printf("Input room id to join room: ");
         scanf("%s", inputRoomID);
@@ -168,21 +175,6 @@ void JoinRoom(int sockfd)
             sprintf(messageClient, "14 %s", inputRoomID);
             ClientSendMessageToServer(sockfd);
 
-            //// Tu thoat
-            // int back = 0;
-            // do
-            // {
-            //     back = Back("return", "continue stay here");
-            //     if (back)
-            //     {
-            //         system("clear");
-            //         memset(messageClient, 0, sizeof(messageClient));
-            //         sprintf(messageClient, "10 ");
-            //         ClientSendMessageToServer(sockfd);
-            //         return GameFunction(sockfd);
-            //     }
-            // } while (back != 1);
-
             // Waiting mess from server to do something after
             int recvBytes;
             // Cho
@@ -196,6 +188,7 @@ void JoinRoom(int sockfd)
                     printf("\nHost out room so you must out the room\n");
                     CountTime("Return play game screen", 5);
                     system("clear");
+                    freeMemory(arr, count);
                     return GameFunction(sockfd);
                 }
                 else if (strcmp(arr[0], "14") == 0)
@@ -214,12 +207,13 @@ void JoinRoom(int sockfd)
                 else if (strcmp(arr[0], "15") == 0)
                 {
                     CountTime("Game will start", 5);
-                    InGamePlay(sockfd);
-                    break;
+                    freeMemory(arr, count);
+                    return InGamePlay(sockfd);
                 }
             }
         }
     }
+    freeMemory(lsRoom, countRoom);
 }
 
 int ChangePassword(sockfd)
