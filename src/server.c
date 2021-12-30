@@ -1,8 +1,4 @@
 #include "init.h"
-pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;   
-int             map_size = (HEIGHT+10) * (WIDTH+10) * sizeof(game_map[0][0]);
-	int i;
-
 
 pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
 int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
@@ -234,7 +230,7 @@ void *connection_handler(int *client_socket)
 	} while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
 
 	//Variables for user input
-	char key = UP;
+	char key = RIGHT;
 	char key_buffer;
 	char map_buffer[map_size];
 	int bytes_sent, n;

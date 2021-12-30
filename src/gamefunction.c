@@ -1,9 +1,5 @@
 #include "init.h"
 
-
-char key = UP_KEY;
-int game_result = ONGOING;
-
 void GameFunction(int sockfd)
 {
     char choice[MAX_LENGTH];
