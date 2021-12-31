@@ -28,6 +28,21 @@
 #define MAX_LENGTH 1000
 #define FILE_DATA "./data/datauser.txt"
 
+#define HEIGHT      24
+#define WIDTH       80
+#define FRUIT       -111
+#define WALL        -1111
+#define WALL2       -1112
+#define BORDER      -99
+#define REFRESH     0.15
+#define ONGOING     -34
+#define MAX_SNAKE_LENGTH    HEIGHT * WIDTH
+#define UP_KEY              'W'
+#define DOWN_KEY            'S'
+#define LEFT_KEY            'A'
+#define RIGHT_KEY           'D'
+#define INTERRUPTED -30
+
 char messageClient[MESSAGE_MAX];
 char messageServer[MESSAGE_MAX];
 
@@ -47,30 +62,15 @@ typedef struct _Room
     User usersInRoom[MAX_PLAYER];
     int numberUsersInRoom;
     int roomID; // roomID is socketID of host room
+    int game_map[HEIGHT+10][WIDTH+10];
+    int map_size;
 } Room;
 
 Room listRooms[MAX_ROOM];
 int numberRooms;
 
-#define HEIGHT      24
-#define WIDTH       80
-#define FRUIT       -111
-#define WALL        -1111
-#define WALL2       -1112
-#define BORDER      -99
-#define REFRESH     0.15
-#define ONGOING     -34
-#define MAX_SNAKE_LENGTH    HEIGHT * WIDTH
-#define UP_KEY              'W'
-#define DOWN_KEY            'S'
-#define LEFT_KEY            'A'
-#define RIGHT_KEY           'D'
-#define INTERRUPTED -30
-
 // int game_result = ONGOING;
 WINDOW* win;
-int game_map[HEIGHT+10][WIDTH+10];
-
 //Direction key types
 typedef enum{
     UP    = UP_KEY, 

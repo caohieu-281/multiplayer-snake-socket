@@ -5,6 +5,8 @@ void *connection_handler(int *client_socket)
 	int socket = *(int *)client_socket;
 	int send_status;
 	int read_len;
+	int play = 0;
+	int roomIdPub = -1;
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
 	{
 		int count;
@@ -68,12 +70,8 @@ void *connection_handler(int *client_socket)
 				listRooms[numberRooms].usersInRoom[0].status = listUsers[thUserInList].status;
 				listRooms[numberRooms].numberUsersInRoom = 1;
 				listRooms[numberRooms].roomID = roomID;
+				listRooms[numberRooms].map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(listRooms[numberRooms].game_map[0][0]);
 				numberRooms++;
-				for (int i = 0; i < numberRooms; i++)
-				{
-					printf("room id %d\n", listRooms[i].roomID);
-					printf("number room %d\n", listRooms[i].numberUsersInRoom);
-				}
 			}
 		}
 
@@ -190,6 +188,7 @@ void *connection_handler(int *client_socket)
 				sprintf(messageServer, "start");
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
+				roomIdPub = atoi(arr[1]);
 				break;
 			}
 			if (strcasecmp(arr[2], "q") == 0)
@@ -200,7 +199,7 @@ void *connection_handler(int *client_socket)
 		freeMemory(arr, count);
 	}
 
-	play_game(socket);
+	play_game(roomIdPub, socket);
 
 	return 0;
 }
@@ -242,4 +241,3 @@ int main(int argc, char *argv[])
 	close(server_socket);
 	return 0;
 }
-

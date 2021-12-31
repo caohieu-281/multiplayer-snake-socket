@@ -5,7 +5,8 @@
         "stdlib.h": "c",
         "init.h": "c",
         "system_error": "c",
-        "inet.h": "c"
+        "inet.h": "c",
+        "gameplay.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
