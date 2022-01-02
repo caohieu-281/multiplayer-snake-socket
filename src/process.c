@@ -258,63 +258,6 @@ void RefreshScreenWaitingRoom(int roomID)
     }
 }
 
-void AddWall(pthread_mutex_t map_lock)
-{
-    int x, y, a;
-    do
-    {
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand() % 10;
-    while (a + y >= HEIGHT || a < 3)
-    {
-        a = rand() % 10;
-    }
-    for (int i = 0; i < a; i++)
-    {
-        if (game_map[y + i][x] == 0)
-            game_map[y + i][x] = WALL;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-
-void AddWall2(pthread_mutex_t map_lock)
-{
-    int x, y, a;
-    do
-    {
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand() % 10;
-    while (a + x >= WIDTH || a < 3)
-    {
-        a = rand() % 10;
-    }
-    for (int i = 0; i < a; i++)
-    {
-        if (game_map[y][x + i] == 0)
-            game_map[y][x + i] = WALL2;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-
-void AddFruit(pthread_mutex_t map_lock)
-{
-    int x, y;
-    do
-    {
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    game_map[y][x] = FRUIT;
-    pthread_mutex_unlock(&map_lock);
-}
-
 void sortScore()
 {
     return;

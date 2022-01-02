@@ -190,18 +190,20 @@ void *connection_handler(int *client_socket)
 				sprintf(messageServer, "start");
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
-				break;
 			}
 			if (strcasecmp(arr[2], "q") == 0)
 			{
 				UserOutRoom(atoi(arr[1]), socket);
 			}
 		}
+		else if (strcmp(arr[0], "16") == 0)
+		{
+			break;
+		}
 		freeMemory(arr, count);
 	}
 
-	play_game(socket);
-
+	play_game(socket);	
 	return 0;
 }
 

@@ -1,9 +1,9 @@
 #include "init.h"
 
 char key_buffer;
-
 char key = UP_KEY;
 int game_result = ONGOING;
+WINDOW* win;
 
 //Stevens, chapter 12, page 428: Create detatched thread
 int make_thread(void *(*fn)(void *), void *arg)
@@ -22,7 +22,7 @@ int make_thread(void *(*fn)(void *), void *arg)
     return err;
 }
 
-void *write_to_server(void *arg)
+void* write_to_server(void *arg)
 {
     int sockfd = *(int *)arg;
     struct timespec ts;
@@ -38,7 +38,7 @@ void *write_to_server(void *arg)
     return 0;
 }
 
-void *update_screen(void *arg)
+void* update_screen(void *arg)
 {
     int sockfd = *(int *)arg;
     int bytes_read;
@@ -46,25 +46,38 @@ void *update_screen(void *arg)
     int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
     char map_buffer[map_size];
     int i, j, n;
+    char message[MAX_LENGTH];
 
-    while (1)
+    while(1)
     {
 
         //Recieve updated map from server
         bytes_read = 0;
         bzero(map_buffer, map_size);
+     
         while (bytes_read < map_size)
         {
             n = recv(sockfd, map_buffer + bytes_read, map_size - bytes_read, 0);
+            if(n <= 0)
+                goto end;
             bytes_read += n;
         }
+
+        printf("%d\n", bytes_read);
         memcpy(game_map, map_buffer, map_size);
+
+        for (i = 1; i < HEIGHT - 1; i++) {
+            for (int j = 1; j < WIDTH - 1; j++)
+                printf("%d ", game_map[i][j]);
+            printf("\n");
+        }
+        printf("%d\n\n\n", map_size);
 
         clear();
         box(win, 0, 0);
         refresh();
         wrefresh(win);
-        //for each position in the array, check if it's a snake head or bodypart
+        // for each position in the array, check if it's a snake head or bodypart
         for (i = 1; i < HEIGHT - 1; i++)
         {
             for (j = 1; j < WIDTH - 1; j++)
@@ -151,6 +164,8 @@ void *update_screen(void *arg)
         }
         refresh();
     }
+
+    end: game_result = game_map[0][0];
     return 0;
 }
 
@@ -165,7 +180,7 @@ void InGamePlay(int sockfd)
     use_default_colors();
     curs_set(0);
 
-    //Set window to new ncurses window
+    // //Set window to new ncurses window
     win = newwin(HEIGHT, WIDTH, 0, 0);
     //Snake colours
     init_pair(0, COLOR_WHITE, COLOR_BLUE);
@@ -215,4 +230,30 @@ void InGamePlay(int sockfd)
         else if ((key_buffer == UP_KEY) || (key_buffer == DOWN_KEY) || (key_buffer == LEFT_KEY) || (key_buffer == RIGHT_KEY))
             key = key_buffer;
     }
+    //Show the user who won
+    WINDOW* announcement = newwin(7, 35, (HEIGHT - 7)/2, (WIDTH - 35)/2);
+    box(announcement, 0, 0);
+    if (game_result == WINNER){
+        mvwaddstr(announcement, 2, (35-21)/2, "Game Over - You WIN!");
+        mvwaddstr(announcement, 4, (35-21)/2, "Press any key to quit.");
+        wbkgd(announcement,COLOR_PAIR(2));
+    } else{
+        mvwaddstr(announcement, 2, (35-21)/2, "Game Over - you lose!");
+        if(game_result > 0)
+            mvwprintw(announcement, 3, (35-13)/2, "Player %d won.", game_result);
+        mvwaddstr(announcement, 4, (35-21)/2, "Press any key to quit.");
+        wbkgd(announcement,COLOR_PAIR(1));
+    }
+    mvwin(announcement, (HEIGHT - 7)/2, (WIDTH - 35)/2);
+    wnoutrefresh(announcement);
+    wrefresh(announcement);
+    sleep(2);
+    wgetch(announcement);
+    delwin(announcement);
+    wclear(win);
+
+    echo(); 
+    curs_set(1);  
+    endwin();
+    close(sockfd);
 }

@@ -66,10 +66,8 @@ int numberRooms;
 #define LEFT_KEY            'A'
 #define RIGHT_KEY           'D'
 #define INTERRUPTED -30
-
-// int game_result = ONGOING;
-WINDOW* win;
-int game_map[HEIGHT+10][WIDTH+10];
+#define WINNER_LENGTH       3
+#define WINNER              -94
 
 //Direction key types
 typedef enum{
