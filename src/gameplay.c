@@ -63,15 +63,7 @@ void* update_screen(void *arg)
             bytes_read += n;
         }
 
-        printf("%d\n", bytes_read);
         memcpy(game_map, map_buffer, map_size);
-
-        for (i = 1; i < HEIGHT - 1; i++) {
-            for (int j = 1; j < WIDTH - 1; j++)
-                printf("%d ", game_map[i][j]);
-            printf("\n");
-        }
-        printf("%d\n\n\n", map_size);
 
         clear();
         box(win, 0, 0);
@@ -255,5 +247,8 @@ void InGamePlay(int sockfd)
     echo(); 
     curs_set(1);  
     endwin();
-    close(sockfd);
+    memset(messageClient, 0, sizeof(messageClient));
+    sprintf(messageClient, "17");
+    ClientSendMessageToServer(sockfd);
+    return GameFunction(sockfd);
 }

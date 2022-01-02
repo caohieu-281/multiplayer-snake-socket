@@ -5,6 +5,7 @@ void *connection_handler(int *client_socket)
 	int socket = *(int *)client_socket;
 	int send_status;
 	int read_len;
+	begin:
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
 	{
 		int count;
@@ -203,7 +204,14 @@ void *connection_handler(int *client_socket)
 		freeMemory(arr, count);
 	}
 
-	play_game(socket);	
+	PlayGame(socket);	
+
+	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
+		if (read_len <= 0)
+			break;
+		if (strcmp(messageServer, "17") == 0) goto begin;
+	}
+
 	return 0;
 }
 

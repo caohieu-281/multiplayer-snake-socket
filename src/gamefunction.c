@@ -66,7 +66,6 @@ void GameFunction(int sockfd)
 
 void CreateRoom(int sockfd)
 {
-    printf("%d\n", sockfd);
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "3 ");
     ClientSendMessageToServer(sockfd);
@@ -209,7 +208,11 @@ void JoinRoom(int sockfd)
                 }
                 else if (strcmp(arr[0], "15") == 0)
                 {
-                    CountTime("Game will start", 5);
+                    memset(messageClient, 0, sizeof(messageClient));
+                    sprintf(messageClient, "16");
+                    ClientSendMessageToServer(sockfd);
+                    CountTime("Game will start", 1);
+                    system("clear");
                     freeMemory(arr, count);
                     return InGamePlay(sockfd);
                 }
@@ -288,7 +291,9 @@ void ShowProfile(int sockfd)
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "6 ");
     ClientSendMessageToServer(sockfd);
+    printf("%s\n", messageClient);
     ClientReceiveMessageFromServer(sockfd);
+    printf("%s\n", messageClient);
     char **arr = NULL;
     int count = string_split(messageClient, ' ', &arr);
     printf("\n _______________This is your profile______________\n");
@@ -409,7 +414,7 @@ void AddFruit()
 
 /*game function for server*/
 //Function to create a snake
-snake* make_snake(int player_no, int head_y, int head_x){
+snake* MakeSnake(int player_no, int head_y, int head_x){
     
     //Place the snake on the map (matrix)
     pthread_mutex_lock(&map_lock);
@@ -440,7 +445,7 @@ snake* make_snake(int player_no, int head_y, int head_x){
 }
 
 //Function to kill snake and free memory
-void kill_snake(snake* s){
+void KillSnake(snake* s){
 
     //Set all snake coordinates to zero on map
     pthread_mutex_lock(&map_lock);
@@ -456,7 +461,7 @@ void kill_snake(snake* s){
 }
 
 //Function for a snake to eat a fruit in front of it
-void eat_fruit(snake* s, direction d, int player_no){
+void EatFruit(snake* s, direction d, int player_no){
     memmove(&(s->body_segment[1]), 
             &(s->body_segment[0]), 
             (s->length-2) * sizeof(coordinate));
@@ -506,7 +511,7 @@ void eat_fruit(snake* s, direction d, int player_no){
 }
 
 //Function to move snake
-void move_snake(snake* s, direction d){
+void MoveSnake(snake* s, direction d){
     memmove(&(s->body_segment[1]), 
             &(s->body_segment[0]), 
             (s->length-2) * sizeof(coordinate));
@@ -546,7 +551,7 @@ void move_snake(snake* s, direction d){
     s->tail.x = s->body_segment[s->length-2].x;
 }
 
-void play_game(int socket) {
+void PlayGame(int socket) {
     int i;
 	// MakeGame(atoi(arr[1]));
 
@@ -577,7 +582,7 @@ void play_game(int socket) {
 		head_x = rand() % (WIDTH - 6) + 3;
 	} while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
 	int player_no = socket - 3;
-	snake* player_snake = make_snake(player_no, head_y, head_x);
+	snake* player_snake = MakeSnake(player_no, head_y, head_x);
 
 
 	//Variables for user input
@@ -619,7 +624,6 @@ void play_game(int socket) {
             bytes_sent += send(socket, game_map, map_size, 0);
             if (bytes_sent < 0) error("ERROR writing to socket");
         }
-        printf("%d\n", bytes_sent);
 
         // Player key input
         bzero(&key_buffer, 1);
@@ -638,61 +642,61 @@ void play_game(int socket) {
         switch(key){
 
             case UP:{
-                if((game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
-                    !(game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
-                    move_snake(player_snake, UP);
+                if ((game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
+                    !(game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)) {
+                    MoveSnake(player_snake, UP);
                 }
                 else if((game_map[player_snake->head.y-1][player_snake->head.x] == FRUIT) || 
                     (game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
-                    eat_fruit(player_snake, UP, player_no);
+                    EatFruit(player_snake, UP, player_no);
                 }
-                else{
-                    move_snake(player_snake, LEFT);
+                else {
+                    MoveSnake(player_snake, LEFT);
                     success = 0;
                 }
                 break;
             }
 
             case DOWN:{
-                if((game_map[player_snake->head.y+1][player_snake->head.x] == 0)&& 
-                    !(game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
-                    move_snake(player_snake, DOWN);
+                if ((game_map[player_snake->head.y+1][player_snake->head.x] == 0) && 
+                    !(game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)) {
+                    MoveSnake(player_snake, DOWN);
                 }
                 else if((game_map[player_snake->head.y+1][player_snake->head.x] == FRUIT) || 
                     (game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
-                    eat_fruit(player_snake, DOWN, player_no);
+                    EatFruit(player_snake, DOWN, player_no);
                 }
-                else{
-                    move_snake(player_snake, DOWN);
+                else {
+                    MoveSnake(player_snake, DOWN);
                     success = 0;
                 }
                 break;
             }
 
             case LEFT:{
-                if(game_map[player_snake->head.y][player_snake->head.x-1] == 0){
-                    move_snake(player_snake, LEFT);
+                if (game_map[player_snake->head.y][player_snake->head.x-1] == 0) {
+                    MoveSnake(player_snake, LEFT);
                 }
-                else if(game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT){
-                    eat_fruit(player_snake, LEFT, player_no);
+                else if(game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT) {
+                    EatFruit(player_snake, LEFT, player_no);
 
                 }
                 else{
-                    move_snake(player_snake, LEFT);
+                    MoveSnake(player_snake, LEFT);
                     success = 0;
                 }
                 break;
             }
 
             case RIGHT:{
-                if(game_map[player_snake->head.y][player_snake->head.x+1] == 0){
-                    move_snake(player_snake, RIGHT);
+                if (game_map[player_snake->head.y][player_snake->head.x+1] == 0) {
+                    MoveSnake(player_snake, RIGHT);
                 }
-                else if(game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT){
-                    eat_fruit(player_snake, RIGHT, player_no);
+                else if (game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT) {
+                    EatFruit(player_snake, RIGHT, player_no);
                 }
-                else{
-                    move_snake(player_snake, RIGHT);
+                else {
+                    MoveSnake(player_snake, RIGHT);
                     success = 0;
                 }
                 break;
@@ -702,24 +706,18 @@ void play_game(int socket) {
         }   
 
     }
+    DeleteRoom(4);
     if (player_snake->length - 3 == WINNER_LENGTH){
         fprintf(stderr, "Player %d had won!\n", player_no);
-        // tmp->win_times += 1;
         // writeFile("nguoidung.txt", l);
-        kill_snake(player_snake);
+        KillSnake(player_snake);
         game_map[HEIGHT+player_no][WIDTH+2] = 0;
-        close(socket); 
-        // number_players = 0;
-        // check_run = 0; 
-        // host[0] = '\0';
         return 0;
     }
     else {
         fprintf(stderr, "Player %d had exited game!\n", player_no);
-        kill_snake(player_snake);
+        KillSnake(player_snake);
         game_map[HEIGHT+player_no][WIDTH+2] = 0;
-        // if(number_players == 0) check_run = 0;
-        close(socket);  
         return 0;
     }
 }
