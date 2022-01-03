@@ -603,7 +603,7 @@ void PlayGame(int socket) {
         // Check if someone won
         if(someone_won)
             success = 0;
-
+        printf("%d\n", game_map[0][0]);
         // Check if you are the winner
         if(player_snake->length-3 >= WINNER_LENGTH){
             someone_won = player_no;
@@ -706,8 +706,8 @@ void PlayGame(int socket) {
         }   
 
     }
-    DeleteRoom(4);
-    if (player_snake->length - 3 == WINNER_LENGTH){
+    // DeleteRoom(4);
+    if (player_snake->length - 3 == WINNER_LENGTH) {
         fprintf(stderr, "Player %d had won!\n", player_no);
         // writeFile("nguoidung.txt", l);
         KillSnake(player_snake);

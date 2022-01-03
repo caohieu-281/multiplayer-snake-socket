@@ -66,7 +66,7 @@ int numberRooms;
 #define LEFT_KEY            'A'
 #define RIGHT_KEY           'D'
 #define INTERRUPTED -30
-#define WINNER_LENGTH       3
+#define WINNER_LENGTH       1
 #define WINNER              -94
 
 //Direction key types

@@ -48,7 +48,7 @@ void* update_screen(void *arg)
     int i, j, n;
     char message[MAX_LENGTH];
 
-    while(1)
+    while (game_result == ONGOING)
     {
 
         //Recieve updated map from server
@@ -58,12 +58,12 @@ void* update_screen(void *arg)
         while (bytes_read < map_size)
         {
             n = recv(sockfd, map_buffer + bytes_read, map_size - bytes_read, 0);
-            if(n <= 0)
-                goto end;
             bytes_read += n;
         }
 
         memcpy(game_map, map_buffer, map_size);
+
+        if (game_map[0][0] != BORDER) break; 
 
         clear();
         box(win, 0, 0);
@@ -157,7 +157,7 @@ void* update_screen(void *arg)
         refresh();
     }
 
-    end: game_result = game_map[0][0];
+    game_result = game_map[0][0];
     return 0;
 }
 
@@ -208,7 +208,6 @@ void InGamePlay(int sockfd)
 
     while (game_result == ONGOING)
     {
-
         //Get player input with time out
         bzero(&key_buffer, 1);
         timeout(REFRESH * 1000);
@@ -225,6 +224,7 @@ void InGamePlay(int sockfd)
     //Show the user who won
     WINDOW* announcement = newwin(7, 35, (HEIGHT - 7)/2, (WIDTH - 35)/2);
     box(announcement, 0, 0);
+    mvwaddstr(announcement, 2, (35-21)/2, "Game Over - You WIN!");
     if (game_result == WINNER){
         mvwaddstr(announcement, 2, (35-21)/2, "Game Over - You WIN!");
         mvwaddstr(announcement, 4, (35-21)/2, "Press any key to quit.");
@@ -247,8 +247,9 @@ void InGamePlay(int sockfd)
     echo(); 
     curs_set(1);  
     endwin();
-    memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "17");
-    ClientSendMessageToServer(sockfd);
-    return GameFunction(sockfd);
+    // pthread_exit(NULL);
+    // memset(messageClient, 0, sizeof(messageClient));
+    // sprintf(messageClient, "17");
+    // ClientSendMessageToServer(sockfd);
+    // return GameFunction(sockfd);
 }
