@@ -603,7 +603,7 @@ void PlayGame(int socket) {
         // Check if someone won
         if(someone_won)
             success = 0;
-        printf("%d\n", game_map[0][0]);
+
         // Check if you are the winner
         if(player_snake->length-3 >= WINNER_LENGTH){
             someone_won = player_no;
@@ -651,8 +651,8 @@ void PlayGame(int socket) {
                     EatFruit(player_snake, UP, player_no);
                 }
                 else {
-                    MoveSnake(player_snake, LEFT);
-                    success = 0;
+                    //MoveSnake(player_snake, LEFT);
+                    // success = 0;
                 }
                 break;
             }
@@ -667,8 +667,8 @@ void PlayGame(int socket) {
                     EatFruit(player_snake, DOWN, player_no);
                 }
                 else {
-                    MoveSnake(player_snake, DOWN);
-                    success = 0;
+                    //MoveSnake(player_snake, DOWN);
+                    // success = 0;
                 }
                 break;
             }
@@ -682,8 +682,8 @@ void PlayGame(int socket) {
 
                 }
                 else{
-                    MoveSnake(player_snake, LEFT);
-                    success = 0;
+                    //MoveSnake(player_snake, LEFT);
+                    // success = 0;
                 }
                 break;
             }
@@ -696,8 +696,8 @@ void PlayGame(int socket) {
                     EatFruit(player_snake, RIGHT, player_no);
                 }
                 else {
-                    MoveSnake(player_snake, RIGHT);
-                    success = 0;
+                    //MoveSnake(player_snake, RIGHT);
+                    // success = 0;
                 }
                 break;
             }
