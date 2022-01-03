@@ -68,6 +68,7 @@ int numberRooms;
 #define INTERRUPTED -30
 #define WINNER_LENGTH       1
 #define WINNER              -94
+#define LOSE              -100
 
 //Direction key types
 typedef enum{

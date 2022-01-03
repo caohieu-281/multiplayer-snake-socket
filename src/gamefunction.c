@@ -291,9 +291,7 @@ void ShowProfile(int sockfd)
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "6 ");
     ClientSendMessageToServer(sockfd);
-    printf("%s\n", messageClient);
     ClientReceiveMessageFromServer(sockfd);
-    printf("%s\n", messageClient);
     char **arr = NULL;
     int count = string_split(messageClient, ' ', &arr);
     printf("\n _______________This is your profile______________\n");
@@ -599,18 +597,18 @@ void PlayGame(int socket) {
         bytes_sent += send(socket, game_map, map_size, 0);
         if (bytes_sent < 0) error("ERROR writing to socket");
     }
-	while(success){
+	while (success) {
         // Check if someone won
-        if(someone_won)
+        if (someone_won)
             success = 0;
-
+       
         // Check if you are the winner
-        if(player_snake->length-3 >= WINNER_LENGTH){
+        if (player_snake->length-3 >= WINNER_LENGTH) {
             someone_won = player_no;
             pthread_mutex_lock(&map_lock);
             game_map[0][0] = WINNER;
             pthread_mutex_unlock(&map_lock);
-        } else if(game_map[0][0] != BORDER){
+        } else if (game_map[0][0] != BORDER){
             pthread_mutex_lock(&map_lock);
             game_map[0][0] = someone_won;
             pthread_mutex_unlock(&map_lock);
@@ -620,90 +618,92 @@ void PlayGame(int socket) {
         memcpy(map_buffer, game_map, map_size);
         bytes_sent = 0;
 
-        while(bytes_sent < map_size){         
+        while (bytes_sent < map_size) {         
             bytes_sent += send(socket, game_map, map_size, 0);
             if (bytes_sent < 0) error("ERROR writing to socket");
         }
-
-        // Player key input
-        bzero(&key_buffer, 1);
-        n = read(socket, &key_buffer, 1);
-        if (n <= 0)
-            break;
-
-        // If user key is a direction, then apply it
-        key_buffer = toupper(key_buffer);   
-        if (((key_buffer == UP) && !(player_snake->head.d == DOWN))
-        || ((key_buffer == DOWN) && !(player_snake->head.d == UP))
-        || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) 
-        || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
-            key = key_buffer;
-
-        switch(key){
-
-            case UP:{
-                if ((game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
-                    !(game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)) {
-                    MoveSnake(player_snake, UP);
-                }
-                else if((game_map[player_snake->head.y-1][player_snake->head.x] == FRUIT) || 
-                    (game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
-                    EatFruit(player_snake, UP, player_no);
-                }
-                else {
-                    //MoveSnake(player_snake, LEFT);
-                    // success = 0;
-                }
+        
+            // Player key input
+            bzero(&key_buffer, 1);
+            n = read(socket, &key_buffer, 1);
+            if (n <= 0)
                 break;
-            }
 
-            case DOWN:{
-                if ((game_map[player_snake->head.y+1][player_snake->head.x] == 0) && 
-                    !(game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)) {
-                    MoveSnake(player_snake, DOWN);
-                }
-                else if((game_map[player_snake->head.y+1][player_snake->head.x] == FRUIT) || 
-                    (game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
-                    EatFruit(player_snake, DOWN, player_no);
-                }
-                else {
-                    //MoveSnake(player_snake, DOWN);
-                    // success = 0;
-                }
-                break;
-            }
+            // If user key is a direction, then apply it
+            key_buffer = toupper(key_buffer);   
+            if (((key_buffer == UP) && !(player_snake->head.d == DOWN))
+            || ((key_buffer == DOWN) && !(player_snake->head.d == UP))
+            || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) 
+            || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
+                key = key_buffer;
 
-            case LEFT:{
-                if (game_map[player_snake->head.y][player_snake->head.x-1] == 0) {
-                    MoveSnake(player_snake, LEFT);
-                }
-                else if(game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT) {
-                    EatFruit(player_snake, LEFT, player_no);
+        if (player_snake->length != 0) {
+            switch (key) {
 
+                case UP:
+                {
+                    if ((game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
+                        !(game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)) {
+                        MoveSnake(player_snake, UP);
+                    }
+                    else if ((game_map[player_snake->head.y-1][player_snake->head.x] == FRUIT) || 
+                        (game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
+                        EatFruit(player_snake, UP, player_no);
+                    }
+                    else {
+                        player_snake->length = 0;
+                    }
+                    break;
                 }
-                else{
-                    //MoveSnake(player_snake, LEFT);
-                    // success = 0;
-                }
-                break;
-            }
 
-            case RIGHT:{
-                if (game_map[player_snake->head.y][player_snake->head.x+1] == 0) {
-                    MoveSnake(player_snake, RIGHT);
+                case DOWN:
+                {
+                    if ((game_map[player_snake->head.y+1][player_snake->head.x] == 0) && 
+                        !(game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)) {
+                        MoveSnake(player_snake, DOWN);
+                    }
+                    else if ((game_map[player_snake->head.y+1][player_snake->head.x] == FRUIT) || 
+                        (game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
+                        EatFruit(player_snake, DOWN, player_no);
+                    }
+                    else {
+                        player_snake->length = 0;
+                    }
+                    break;
                 }
-                else if (game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT) {
-                    EatFruit(player_snake, RIGHT, player_no);
-                }
-                else {
-                    //MoveSnake(player_snake, RIGHT);
-                    // success = 0;
-                }
-                break;
-            }
 
-            default: break;
-        }   
+                case LEFT:
+                {
+                    if (game_map[player_snake->head.y][player_snake->head.x-1] == 0) {
+                        MoveSnake(player_snake, LEFT);
+                    }
+                    else if (game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT) {
+                        EatFruit(player_snake, LEFT, player_no);
+
+                    }
+                    else {
+                        player_snake->length = 0;
+                    }
+                    break;
+                }
+
+                case RIGHT:
+                {
+                    if (game_map[player_snake->head.y][player_snake->head.x+1] == 0) {
+                        MoveSnake(player_snake, RIGHT);
+                    }
+                    else if (game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT) {
+                        EatFruit(player_snake, RIGHT, player_no);
+                    }
+                    else {
+                        player_snake->length = 0;
+                    }
+                    break;
+                }
+
+                default: break;
+            }   
+        }
 
     }
     // DeleteRoom(4);

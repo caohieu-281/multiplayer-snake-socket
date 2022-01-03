@@ -154,6 +154,7 @@ void* update_screen(void *arg)
                 }
             }
         }
+        mvprintw(HEIGHT + 1, 5, "If you lose you can continue watching or press '.' to quit at any time\n");
         refresh();
     }
 
@@ -248,8 +249,8 @@ void InGamePlay(int sockfd)
     curs_set(1);  
     endwin();
     // pthread_exit(NULL);
-    // memset(messageClient, 0, sizeof(messageClient));
-    // sprintf(messageClient, "17");
-    // ClientSendMessageToServer(sockfd);
-    // return GameFunction(sockfd);
+    memset(messageClient, 0, sizeof(messageClient));
+    sprintf(messageClient, "17");
+    ClientSendMessageToServer(sockfd);
+    return GameFunction(sockfd);
 }
