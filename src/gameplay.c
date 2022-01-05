@@ -33,7 +33,7 @@ void* write_to_server(void *arg)
         nanosleep(&ts, NULL);
         int n = send(sockfd, &key, 1, 0);
         if (n < 0)
-            error("ERROR writing to socket.");
+            error("ERROR writinguh  to socket.");
     }
     return 0;
 }
