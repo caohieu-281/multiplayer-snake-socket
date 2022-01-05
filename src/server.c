@@ -189,6 +189,7 @@ void *connection_handler(int *client_socket)
 				sprintf(messageServer, "start");
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
+				CreateMap(atoi(arr[1]));
 				// roomIdPub = atoi(arr[1]);
 				// break;
 			}

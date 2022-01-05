@@ -63,7 +63,6 @@ typedef struct _Room
     int numberUsersInRoom;
     int roomID; // roomID is socketID of host room
     int game_map[HEIGHT+10][WIDTH+10];
-    int map_size;
 } Room;
 
 Room listRooms[MAX_ROOM];
