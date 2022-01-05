@@ -99,20 +99,23 @@ void CreateRoom(int sockfd)
                 sprintf(messageClient, "15 %s %s", arr[1], command);
                 ClientSendMessageToServer(sockfd);
                 ClientReceiveMessageFromServer(sockfd);
-                // if (strcmp(messageClient, "start") == 0)
-                // {
+                if (strcmp(messageClient, "start") == 0)
+                {
+                    memset(messageClient, 0, sizeof(messageClient));
+                    sprintf(messageClient, "16");
+                    ClientSendMessageToServer(sockfd);
                     CountTime("Game will start", 1);
                     system("clear");
                     freeMemory(arr, count);
                     return InGamePlay(sockfd);
-                // }
-                // else if (strcmp(messageClient, "-1") == 0)
-                // {
-                //     CountTime("Make other players out room", 3);
-                //     system("clear");
-                //     freeMemory(arr, count);
-                //     return GameFunction(sockfd);
-                // }
+                }
+                else if (strcmp(messageClient, "-1") == 0)
+                {
+                    CountTime("Make other players out room", 3);
+                    system("clear");
+                    freeMemory(arr, count);
+                    return GameFunction(sockfd);
+                }
             }
             system("clear");
         } while (play != 1);
@@ -205,7 +208,11 @@ void JoinRoom(int sockfd)
                 }
                 else if (strcmp(arr[0], "15") == 0)
                 {
-                    CountTime("Game will start", 5);
+                    memset(messageClient, 0, sizeof(messageClient));
+                    sprintf(messageClient, "16");
+                    ClientSendMessageToServer(sockfd);
+                    CountTime("Game will start", 1);
+                    system("clear");
                     freeMemory(arr, count);
                     return InGamePlay(sockfd);
                 }

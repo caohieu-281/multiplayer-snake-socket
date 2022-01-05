@@ -258,23 +258,240 @@ void RefreshScreenWaitingRoom(int roomID)
     }
 }
 
-// int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
+int someone_won = 0;
+int game_map[HEIGHT + 10][WIDTH + 10];
+int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
 pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
+
+void AddWall()
+{
+    int x, y, a;
+    do{
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    pthread_mutex_lock(&map_lock);
+    a = rand()%10;
+    while(a+y >= HEIGHT || a < 3){
+        a = rand()%10;
+    }
+    for(int i = 0; i < a; i++){
+        if(game_map[y+i][x] == 0)
+            game_map[y+i][x] = WALL;
+    }
+    pthread_mutex_unlock(&map_lock);
+}
+
+void AddWall2()
+{
+    int x, y, a;
+    do{
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    pthread_mutex_lock(&map_lock);
+    a = rand()%10;
+    while(a+x >= WIDTH || a < 3){
+        a = rand()%10;
+    }
+    for(int i = 0; i < a; i++){
+        if(game_map[y][x+i] == 0)
+            game_map[y][x+i] = WALL2;
+    }
+    pthread_mutex_unlock(&map_lock);
+}
+
+void AddFruit()
+{
+    int x, y;
+    do{
+        y = rand() % (HEIGHT - 6) + 3;
+        x = rand() % (WIDTH - 6) + 3;
+    } while (game_map[y][x] != 0);
+    printf("test\n");
+    pthread_mutex_lock(&map_lock);
+    printf("test\n");
+    game_map[y][x] = FRUIT;
+    pthread_mutex_unlock(&map_lock);
+    printf("test\n");
+}
+
+// void play_game(int roomID, int socket) {
+//     printf("1 ahah\n");
+//     int thRoomInList = SearchRoom(roomID);
+//     int i;
+// 	// MakeGame(atoi(arr[1]));
+// 	//Set game borders
+// 	for (i = 0; i < HEIGHT; i++)
+// 		listRooms[thRoomInList].game_map[i][0] = listRooms[thRoomInList].game_map[i][WIDTH - 2] = BORDER;
+// 	for (i = 0; i < WIDTH; i++)
+// 		listRooms[thRoomInList].game_map[0][i] = listRooms[thRoomInList].game_map[HEIGHT - 1][i] = BORDER;
+
+//     printf("2 ahah\n");
+// 	//Randomly add five fruit
+// 	srand(time(NULL));
+// 	for (i = 0; i < 5; i++)
+// 		add_fruit(&listRooms[thRoomInList].game_map);
+//     printf("2.1 ahah\n");
+// 	for (i = 0; i < 3; i++)
+// 		add_wall(&listRooms[thRoomInList].game_map);
+//     printf("2.2 ahah\n");
+// 	for (i = 0; i < 2; i++)
+// 		add_wall2(&listRooms[thRoomInList].game_map);
+
+//     printf("3 ahah\n");
+// 	//Find three consecutive zeros in map for starting snake position
+// 	int head_y, head_x;
+// 	srand(time(NULL));
+// 	do
+// 	{
+// 		head_y = rand() % (HEIGHT - 6) + 3;
+// 		head_x = rand() % (WIDTH - 6) + 3;
+// 	} while (!(((listRooms[thRoomInList].game_map[head_y][head_x] == listRooms[thRoomInList].game_map[head_y + 1][head_x]) == listRooms[thRoomInList].game_map[head_y + 2][head_x]) == 0));
+// 	int player_no = socket - 3;
+// 	snake* player_snake = make_snake(listRooms[thRoomInList].game_map, player_no, head_y, head_x);
+//     printf("4 ahah\n");
+// 	//Variables for user input
+// 	char key = RIGHT;
+// 	char key_buffer;
+// 	char map_buffer[listRooms[thRoomInList].map_size];
+// 	int bytes_sent, n;
+// 	int  success = 1;
+
+// 	//Copy map to buffer, and send to client
+// 	memcpy(map_buffer, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
+// 	bytes_sent = 0;
+// 	while (bytes_sent < listRooms[thRoomInList].map_size)
+// 	{
+// 		bytes_sent += send(socket, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size, 0);
+// 		if (bytes_sent < 0)
+// 			error("ERROR writing to socket");
+// 	}
+//     printf("5 ahah\n");
+// 	while(success){
+//         //Check if someone won
+//         // if(someone_won)
+//         //     success = 0;
+
+//         //Check if you are the winner
+//         // if(player_snake->length-3 >= WINNER_LENGTH){
+//         //     // someone_won = player_no;
+//         //     pthread_mutex_lock(&map_lock);
+//         //     game_map[0][0] = WINNER;
+//         //     pthread_mutex_unlock(&map_lock);
+//         // } else if(game_map[0][0] != BORDER){
+            
+//             pthread_mutex_lock(&map_lock);
+//             // game_map[0][0] = someone_won;
+//             pthread_mutex_unlock(&map_lock);
+//         // }
+
+//         //Copy map to buffer, and send to client
+//         memcpy(map_buffer, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
+//         bytes_sent = 0;
+//         while(bytes_sent < listRooms[thRoomInList].map_size){         
+//             bytes_sent += write(socket, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
+//             if (bytes_sent < 0) error("ERROR writing to socket");
+//         } 
+
+//         //Player key input
+//         bzero(&key_buffer, 1);
+//         n = read(socket, &key_buffer, 1);
+//         if (n <= 0)
+//             break;
+//         // printf("Key: %c\n", key_buffer);
+
+//         //If user key is a direction, then apply it
+//         key_buffer = toupper(key_buffer);   
+//         if(  ((key_buffer == UP)    && !(player_snake->head.d == DOWN))
+//         ||((key_buffer == DOWN)  && !(player_snake->head.d == UP))
+//         ||((key_buffer == LEFT)  && !(player_snake->head.d == RIGHT)) 
+//         ||((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
+//             key = key_buffer;
+
+//         switch(key){
+
+//             case UP:{
+//                 if((listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
+//                     !(listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, UP);
+//                 }
+//                 else if((listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x] == FRUIT) || 
+//                     (listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
+//                     eat_fruit(listRooms[thRoomInList].game_map, player_snake, UP, player_no);
+//                 }
+//                 else{
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
+//                     success = 0;
+//                 }
+//                 break;
+//             }
+
+//             case DOWN:{
+//                 if((listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x] == 0)&& 
+//                     !(listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, DOWN);
+//                 }
+//                 else if((listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x] == FRUIT) || 
+//                     (listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
+//                     eat_fruit(listRooms[thRoomInList].game_map, player_snake, DOWN, player_no);
+//                 }
+//                 else{
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, DOWN);
+//                     success = 0;
+//                 }
+//                 break;
+//             }
+
+//             case LEFT:{
+//                 if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x-1] == 0){
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
+//                 }
+//                 else if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT){
+//                     eat_fruit(listRooms[thRoomInList].game_map, player_snake, LEFT, player_no);
+
+//                 }
+//                 else{
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
+//                     success = 0;
+//                 }
+//                 break;
+//             }
+
+//             case RIGHT:{
+//                 if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x+1] == 0){
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, RIGHT);
+//                 }
+//                 else if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT){
+//                     eat_fruit(listRooms[thRoomInList].game_map, player_snake, RIGHT, player_no);
+//                 }
+//                 else{
+//                     move_snake(listRooms[thRoomInList].game_map, player_snake, RIGHT);
+//                     success = 0;
+//                 }
+//                 break;
+//             }
+
+//             default: break;
+//         }   
+//     }
+// }
 
 /*game function for server*/
 //Function to create a snake
-snake* make_snake(int ***game_map, int player_no, int head_y, int head_x){
-    
+snake *MakeSnake(int player_no, int head_y, int head_x)
+{
+
     //Place the snake on the map (matrix)
     pthread_mutex_lock(&map_lock);
-    game_map[head_y][head_x]   = -player_no;
-    game_map[head_y+1][head_x] = 
-    game_map[head_y+2][head_x] = player_no;
-    pthread_mutex_unlock(&map_lock);    
-    
+    game_map[head_y][head_x] = -player_no;
+    game_map[head_y + 1][head_x] =
+        game_map[head_y + 2][head_x] = player_no;
+    pthread_mutex_unlock(&map_lock);
+
     //Create snake struct, set coordinates facing up
-    snake* s = malloc(sizeof(snake));
-    
+    snake *s = malloc(sizeof(snake));
+
     s->player_no = player_no;
     s->length = 3;
 
@@ -294,101 +511,118 @@ snake* make_snake(int ***game_map, int player_no, int head_y, int head_x){
 }
 
 //Function to kill snake and free memory
-void kill_snake(int ***game_map, snake* s){
+void KillSnake(snake *s)
+{
 
     //Set all snake coordinates to zero on map
     pthread_mutex_lock(&map_lock);
-    game_map[s->head.y][s->head.x] = game_map[s->tail.y][s->tail.x] = 0;    
+    game_map[s->head.y][s->head.x] = game_map[s->tail.y][s->tail.x] = 0;
     int i;
-    for(i = 0; i < s->length - 2; i++)
+    for (i = 0; i < s->length - 2; i++)
         game_map[s->body_segment[i].y][s->body_segment[i].x] = 0;
     pthread_mutex_unlock(&map_lock);
 
     //Free memory
-    free(s);    
+    free(s);
     s = NULL;
 }
 
 //Function for a snake to eat a fruit in front of it
-void eat_fruit(int ***game_map, snake* s, direction d, int player_no){
-    memmove(&(s->body_segment[1]), 
-            &(s->body_segment[0]), 
-            (s->length-2) * sizeof(coordinate));
+void EatFruit(snake *s, direction d, int player_no)
+{
+    memmove(&(s->body_segment[1]),
+            &(s->body_segment[0]),
+            (s->length - 2) * sizeof(coordinate));
     s->body_segment[0].y = s->head.y;
-    s->body_segment[0].x = s->head.x; 
+    s->body_segment[0].x = s->head.x;
     s->body_segment[0].d = s->head.d;
-    switch(d){
-        case UP:{
-            s->head.y = s->head.y-1;
-            s->head.d = UP; 
-            if(game_map[s->head.y][s->head.x + 1] == FRUIT){
-                pthread_mutex_lock(&map_lock);
-                game_map[s->head.y][s->head.x + 1] = 0;   
-                pthread_mutex_unlock(&map_lock);        
-            }
-            break;
+    switch (d)
+    {
+    case UP:
+    {
+        s->head.y = s->head.y - 1;
+        s->head.d = UP;
+        if (game_map[s->head.y][s->head.x + 1] == FRUIT)
+        {
+            pthread_mutex_lock(&map_lock);
+            game_map[s->head.y][s->head.x + 1] = 0;
+            pthread_mutex_unlock(&map_lock);
         }
-        case DOWN:{
-            s->head.y = s->head.y+1;
-            s->head.d = DOWN; 
-            if(game_map[s->head.y][s->head.x + 1] == FRUIT){
-                pthread_mutex_lock(&map_lock);
-                game_map[s->head.y][s->head.x + 1] = 0; 
-                pthread_mutex_unlock(&map_lock);
-            }
-            break;
+        break;
+    }
+    case DOWN:
+    {
+        s->head.y = s->head.y + 1;
+        s->head.d = DOWN;
+        if (game_map[s->head.y][s->head.x + 1] == FRUIT)
+        {
+            pthread_mutex_lock(&map_lock);
+            game_map[s->head.y][s->head.x + 1] = 0;
+            pthread_mutex_unlock(&map_lock);
         }
-        case LEFT:{
-            s->head.x = s->head.x-1;
-            s->head.d = LEFT;  
-            break;
-        }
-        case RIGHT:{
-            s->head.x = s->head.x+1;
-            s->head.d = RIGHT;  
-            break;
-        }
-        default: break;
+        break;
+    }
+    case LEFT:
+    {
+        s->head.x = s->head.x - 1;
+        s->head.d = LEFT;
+        break;
+    }
+    case RIGHT:
+    {
+        s->head.x = s->head.x + 1;
+        s->head.d = RIGHT;
+        break;
+    }
+    default:
+        break;
     }
     pthread_mutex_lock(&map_lock);
     game_map[s->head.y][s->head.x] = -(s->player_no);
     game_map[s->body_segment[0].y][s->body_segment[0].x] = s->player_no;
     pthread_mutex_unlock(&map_lock);
     s->length++;
-    game_map[HEIGHT+player_no][WIDTH+2] = s->length+10000;
-    add_fruit(game_map, map_lock);
+    game_map[HEIGHT + player_no][WIDTH + 2] = s->length + 10000;
+    AddFruit();
 }
 
 //Function to move snake
-void move_snake(int ***game_map, snake* s, direction d){
-    memmove(&(s->body_segment[1]), 
-            &(s->body_segment[0]), 
-            (s->length-2) * sizeof(coordinate));
+void MoveSnake(snake *s, direction d)
+{
+    memmove(&(s->body_segment[1]),
+            &(s->body_segment[0]),
+            (s->length - 2) * sizeof(coordinate));
     s->body_segment[0].y = s->head.y;
-    s->body_segment[0].x = s->head.x; 
+    s->body_segment[0].x = s->head.x;
     s->body_segment[0].d = s->head.d;
-    switch(d){
-        case UP:{
-            s->head.y = s->head.y-1;
-            s->head.d = UP;            
-            break;
-        }
-        case DOWN:{
-            s->head.y = s->head.y+1;
-            s->head.d = DOWN;  
-            break;
-        }
-        case LEFT:{
-            s->head.x = s->head.x-1;
-            s->head.d = LEFT;  
-            break;
-        }
-        case RIGHT:{
-            s->head.x = s->head.x+1;
-            s->head.d = RIGHT;  
-            break;
-        }
-        default: break;
+    switch (d)
+    {
+    case UP:
+    {
+        s->head.y = s->head.y - 1;
+        s->head.d = UP;
+        break;
+    }
+    case DOWN:
+    {
+        s->head.y = s->head.y + 1;
+        s->head.d = DOWN;
+        break;
+    }
+    case LEFT:
+    {
+        s->head.x = s->head.x - 1;
+        s->head.d = LEFT;
+        break;
+    }
+    case RIGHT:
+    {
+        s->head.x = s->head.x + 1;
+        s->head.d = RIGHT;
+        break;
+    }
+    default:
+        break;
     }
     pthread_mutex_lock(&map_lock);
     game_map[s->head.y][s->head.x] = -(s->player_no);
@@ -396,217 +630,200 @@ void move_snake(int ***game_map, snake* s, direction d){
     game_map[s->tail.y][s->tail.x] = 0;
     pthread_mutex_unlock(&map_lock);
 
-    s->tail.y = s->body_segment[s->length-2].y;
-    s->tail.x = s->body_segment[s->length-2].x;
+    s->tail.y = s->body_segment[s->length - 2].y;
+    s->tail.x = s->body_segment[s->length - 2].x;
 }
 
-void add_wall(int ***game_map){
-    int x, y, a;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand()%10;
-    while(a+y >= HEIGHT || a < 3){
-        a = rand()%10;
-    }
-    for(int i = 0; i < a; i++){
-        if(game_map[y+i][x] == 0)
-            game_map[y+i][x] = WALL;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-
-void add_wall2(int ***game_map){
-    int x, y, a;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    pthread_mutex_lock(&map_lock);
-    a = rand()%10;
-    while(a+x >= WIDTH || a < 3){
-        a = rand()%10;
-    }
-    for(int i = 0; i < a; i++){
-        if(game_map[y][x+i] == 0)
-            game_map[y][x+i] = WALL2;
-    }
-    pthread_mutex_unlock(&map_lock);
-}
-void add_fruit(int ***game_map){
-    int x, y;
-    do{
-        y = rand() % (HEIGHT - 6) + 3;
-        x = rand() % (WIDTH - 6) + 3;
-    } while (game_map[y][x] != 0);
-    printf("test\n");
-    pthread_mutex_lock(&map_lock);
-    printf("test\n");
-    game_map[y][x] = FRUIT;
-    pthread_mutex_unlock(&map_lock);
-    printf("test\n");
-}
-
-void play_game(int roomID, int socket) {
-    printf("1 ahah\n");
-    int thRoomInList = SearchRoom(roomID);
+void PlayGame(int socket)
+{
     int i;
-	// MakeGame(atoi(arr[1]));
-	//Set game borders
-	for (i = 0; i < HEIGHT; i++)
-		listRooms[thRoomInList].game_map[i][0] = listRooms[thRoomInList].game_map[i][WIDTH - 2] = BORDER;
-	for (i = 0; i < WIDTH; i++)
-		listRooms[thRoomInList].game_map[0][i] = listRooms[thRoomInList].game_map[HEIGHT - 1][i] = BORDER;
+    // MakeGame(atoi(arr[1]));
 
-    printf("2 ahah\n");
-	//Randomly add five fruit
-	srand(time(NULL));
-	for (i = 0; i < 5; i++)
-		add_fruit(&listRooms[thRoomInList].game_map);
-    printf("2.1 ahah\n");
-	for (i = 0; i < 3; i++)
-		add_wall(&listRooms[thRoomInList].game_map);
-    printf("2.2 ahah\n");
-	for (i = 0; i < 2; i++)
-		add_wall2(&listRooms[thRoomInList].game_map);
+    //Fill gamestate matrix with zeros
+    memset(game_map, 0, map_size);
 
-    printf("3 ahah\n");
-	//Find three consecutive zeros in map for starting snake position
-	int head_y, head_x;
-	srand(time(NULL));
-	do
-	{
-		head_y = rand() % (HEIGHT - 6) + 3;
-		head_x = rand() % (WIDTH - 6) + 3;
-	} while (!(((listRooms[thRoomInList].game_map[head_y][head_x] == listRooms[thRoomInList].game_map[head_y + 1][head_x]) == listRooms[thRoomInList].game_map[head_y + 2][head_x]) == 0));
-	int player_no = socket - 3;
-	snake* player_snake = make_snake(listRooms[thRoomInList].game_map, player_no, head_y, head_x);
-    printf("4 ahah\n");
-	//Variables for user input
-	char key = RIGHT;
-	char key_buffer;
-	char map_buffer[listRooms[thRoomInList].map_size];
-	int bytes_sent, n;
-	int  success = 1;
+    //Set game borders
+    for (i = 0; i < HEIGHT; i++)
+        game_map[i][0] = game_map[i][WIDTH - 2] = BORDER;
+    for (i = 0; i < WIDTH; i++)
+        game_map[0][i] = game_map[HEIGHT - 1][i] = BORDER;
 
-	//Copy map to buffer, and send to client
-	memcpy(map_buffer, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
-	bytes_sent = 0;
-	while (bytes_sent < listRooms[thRoomInList].map_size)
-	{
-		bytes_sent += send(socket, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size, 0);
-		if (bytes_sent < 0)
-			error("ERROR writing to socket");
-	}
-    printf("5 ahah\n");
-	while(success){
-        //Check if someone won
-        // if(someone_won)
-        //     success = 0;
+    //Randomly add five fruit
+    srand(time(NULL));
+    for (i = 0; i < 5; i++)
+        AddFruit(map_lock);
+    for (i = 0; i < 3; i++)
+        AddWall(map_lock);
+    for (i = 0; i < 2; i++)
+        AddWall2(map_lock);
 
-        //Check if you are the winner
-        // if(player_snake->length-3 >= WINNER_LENGTH){
-        //     // someone_won = player_no;
-        //     pthread_mutex_lock(&map_lock);
-        //     game_map[0][0] = WINNER;
-        //     pthread_mutex_unlock(&map_lock);
-        // } else if(game_map[0][0] != BORDER){
-            
+    //Find three consecutive zeros in map for starting snake position
+    int head_y, head_x;
+    srand(time(NULL));
+    do
+    {
+        head_y = rand() % (HEIGHT - 6) + 3;
+        head_x = rand() % (WIDTH - 6) + 3;
+    } while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
+    int player_no = socket - 3;
+    snake *player_snake = MakeSnake(player_no, head_y, head_x);
+
+    //Variables for user input
+    char key = UP;
+    char key_buffer;
+    char map_buffer[map_size];
+    int bytes_sent, n;
+    int success = 1;
+
+    memcpy(map_buffer, game_map, map_size);
+    bytes_sent = 0;
+
+    while (bytes_sent < map_size)
+    {
+        bytes_sent += send(socket, game_map, map_size, 0);
+        if (bytes_sent < 0)
+            error("ERROR writing to socket");
+    }
+    while (success)
+    {
+        // Check if someone won
+        if (someone_won)
+            success = 0;
+
+        // Check if you are the winner
+        if (player_snake->length - 3 >= WINNER_LENGTH)
+        {
+            someone_won = player_no;
             pthread_mutex_lock(&map_lock);
-            // game_map[0][0] = someone_won;
+            game_map[0][0] = WINNER;
             pthread_mutex_unlock(&map_lock);
-        // }
+        }
+        else if (game_map[0][0] != BORDER)
+        {
+            pthread_mutex_lock(&map_lock);
+            game_map[0][0] = someone_won;
+            pthread_mutex_unlock(&map_lock);
+        }
 
         //Copy map to buffer, and send to client
-        memcpy(map_buffer, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
+        memcpy(map_buffer, game_map, map_size);
         bytes_sent = 0;
-        while(bytes_sent < listRooms[thRoomInList].map_size){         
-            bytes_sent += write(socket, listRooms[thRoomInList].game_map, listRooms[thRoomInList].map_size);
-            if (bytes_sent < 0) error("ERROR writing to socket");
-        } 
 
-        //Player key input
+        while (bytes_sent < map_size)
+        {
+            bytes_sent += send(socket, game_map, map_size, 0);
+            if (bytes_sent < 0)
+                error("ERROR writing to socket");
+        }
+
+        // Player key input
         bzero(&key_buffer, 1);
         n = read(socket, &key_buffer, 1);
         if (n <= 0)
             break;
-        // printf("Key: %c\n", key_buffer);
 
-        //If user key is a direction, then apply it
-        key_buffer = toupper(key_buffer);   
-        if(  ((key_buffer == UP)    && !(player_snake->head.d == DOWN))
-        ||((key_buffer == DOWN)  && !(player_snake->head.d == UP))
-        ||((key_buffer == LEFT)  && !(player_snake->head.d == RIGHT)) 
-        ||((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
+        // If user key is a direction, then apply it
+        key_buffer = toupper(key_buffer);
+        if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
 
-        switch(key){
+        if (player_snake->length != 0)
+        {
+            switch (key)
+            {
 
-            case UP:{
-                if((listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x] == 0) && 
-                    !(listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, UP);
+            case UP:
+            {
+                if ((game_map[player_snake->head.y - 1][player_snake->head.x] == 0) &&
+                    !(game_map[player_snake->head.y - 1][player_snake->head.x + 1] == FRUIT))
+                {
+                    MoveSnake(player_snake, UP);
                 }
-                else if((listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x] == FRUIT) || 
-                    (listRooms[thRoomInList].game_map[player_snake->head.y-1][player_snake->head.x+1] == FRUIT)){
-                    eat_fruit(listRooms[thRoomInList].game_map, player_snake, UP, player_no);
+                else if ((game_map[player_snake->head.y - 1][player_snake->head.x] == FRUIT) ||
+                         (game_map[player_snake->head.y - 1][player_snake->head.x + 1] == FRUIT))
+                {
+                    EatFruit(player_snake, UP, player_no);
                 }
-                else{
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
-                    success = 0;
+                else
+                {
+                    player_snake->length = 0;
                 }
                 break;
             }
 
-            case DOWN:{
-                if((listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x] == 0)&& 
-                    !(listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, DOWN);
+            case DOWN:
+            {
+                if ((game_map[player_snake->head.y + 1][player_snake->head.x] == 0) &&
+                    !(game_map[player_snake->head.y + 1][player_snake->head.x + 1] == FRUIT))
+                {
+                    MoveSnake(player_snake, DOWN);
                 }
-                else if((listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x] == FRUIT) || 
-                    (listRooms[thRoomInList].game_map[player_snake->head.y+1][player_snake->head.x+1] == FRUIT)){
-                    eat_fruit(listRooms[thRoomInList].game_map, player_snake, DOWN, player_no);
+                else if ((game_map[player_snake->head.y + 1][player_snake->head.x] == FRUIT) ||
+                         (game_map[player_snake->head.y + 1][player_snake->head.x + 1] == FRUIT))
+                {
+                    EatFruit(player_snake, DOWN, player_no);
                 }
-                else{
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, DOWN);
-                    success = 0;
-                }
-                break;
-            }
-
-            case LEFT:{
-                if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x-1] == 0){
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
-                }
-                else if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x-1] == FRUIT){
-                    eat_fruit(listRooms[thRoomInList].game_map, player_snake, LEFT, player_no);
-
-                }
-                else{
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, LEFT);
-                    success = 0;
+                else
+                {
+                    player_snake->length = 0;
                 }
                 break;
             }
 
-            case RIGHT:{
-                if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x+1] == 0){
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, RIGHT);
+            case LEFT:
+            {
+                if (game_map[player_snake->head.y][player_snake->head.x - 1] == 0)
+                {
+                    MoveSnake(player_snake, LEFT);
                 }
-                else if(listRooms[thRoomInList].game_map[player_snake->head.y][player_snake->head.x+1] == FRUIT){
-                    eat_fruit(listRooms[thRoomInList].game_map, player_snake, RIGHT, player_no);
+                else if (game_map[player_snake->head.y][player_snake->head.x - 1] == FRUIT)
+                {
+                    EatFruit(player_snake, LEFT, player_no);
                 }
-                else{
-                    move_snake(listRooms[thRoomInList].game_map, player_snake, RIGHT);
-                    success = 0;
+                else
+                {
+                    player_snake->length = 0;
                 }
                 break;
             }
 
-            default: break;
-        }   
+            case RIGHT:
+            {
+                if (game_map[player_snake->head.y][player_snake->head.x + 1] == 0)
+                {
+                    MoveSnake(player_snake, RIGHT);
+                }
+                else if (game_map[player_snake->head.y][player_snake->head.x + 1] == FRUIT)
+                {
+                    EatFruit(player_snake, RIGHT, player_no);
+                }
+                else
+                {
+                    player_snake->length = 0;
+                }
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    }
+    // DeleteRoom(4);
+    if (player_snake->length - 3 == WINNER_LENGTH)
+    {
+        fprintf(stderr, "Player %d had won!\n", player_no);
+        // writeFile("nguoidung.txt", l);
+        KillSnake(player_snake);
+        game_map[HEIGHT + player_no][WIDTH + 2] = 0;
+        return 0;
+    }
+    else
+    {
+        fprintf(stderr, "Player %d had exited game!\n", player_no);
+        KillSnake(player_snake);
+        game_map[HEIGHT + player_no][WIDTH + 2] = 0;
+        return 0;
     }
 }
 

@@ -69,8 +69,24 @@ typedef struct _Room
 Room listRooms[MAX_ROOM];
 int numberRooms;
 
-// int game_result = ONGOING;
-WINDOW* win;
+#define HEIGHT      24
+#define WIDTH       80
+#define FRUIT       -111
+#define WALL        -1111
+#define WALL2       -1112
+#define BORDER      -99
+#define REFRESH     0.15
+#define ONGOING     -34
+#define MAX_SNAKE_LENGTH    HEIGHT * WIDTH
+#define UP_KEY              'W'
+#define DOWN_KEY            'S'
+#define LEFT_KEY            'A'
+#define RIGHT_KEY           'D'
+#define INTERRUPTED -30
+#define WINNER_LENGTH       1
+#define WINNER              -94
+#define LOSE              -100
+
 //Direction key types
 typedef enum{
     UP    = UP_KEY, 
