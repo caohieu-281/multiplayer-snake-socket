@@ -102,7 +102,7 @@ void CreateRoom(int sockfd)
                 if (strcmp(messageClient, "start") == 0)
                 {
                     memset(messageClient, 0, sizeof(messageClient));
-                    sprintf(messageClient, "16");
+                    sprintf(messageClient, "16 %s", arr[1]);
                     ClientSendMessageToServer(sockfd);
                     CountTime("Game will start", 1);
                     system("clear");
@@ -209,7 +209,7 @@ void JoinRoom(int sockfd)
                 else if (strcmp(arr[0], "15") == 0)
                 {
                     memset(messageClient, 0, sizeof(messageClient));
-                    sprintf(messageClient, "16");
+                    sprintf(messageClient, "16 %s", inputRoomID);
                     ClientSendMessageToServer(sockfd);
                     CountTime("Game will start", 1);
                     system("clear");

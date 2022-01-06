@@ -6,7 +6,7 @@ void *connection_handler(int *client_socket)
 	int send_status;
 	int read_len;
 	// int play = 0;
-	// int roomIdPub = -1;
+	int roomIdPub = -1;
 	begin:
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
 	{
@@ -71,7 +71,7 @@ void *connection_handler(int *client_socket)
 				listRooms[numberRooms].usersInRoom[0].status = listUsers[thUserInList].status;
 				listRooms[numberRooms].numberUsersInRoom = 1;
 				listRooms[numberRooms].roomID = roomID;
-				listRooms[numberRooms].map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(listRooms[numberRooms].game_map[0][0]);
+				// listRooms[numberRooms].map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(listRooms[numberRooms].game_map[0][0]);
 				numberRooms++;
 			}
 		}
@@ -190,7 +190,7 @@ void *connection_handler(int *client_socket)
 				ServerSendToClient(socket);
 				MakeGame(atoi(arr[1]));
 				CreateMap(atoi(arr[1]));
-				// roomIdPub = atoi(arr[1]);
+				roomIdPub = atoi(arr[1]);
 				// break;
 			}
 			if (strcasecmp(arr[2], "q") == 0)
@@ -200,13 +200,14 @@ void *connection_handler(int *client_socket)
 		}
 		else if (strcmp(arr[0], "16") == 0)
 		{
+			roomIdPub = atoi(arr[1]);
 			break;
 		}
 		freeMemory(arr, count);
 	}
 
 	// play_game(roomIdPub, socket);
-	PlayGame(socket);	
+	PlayGame(roomIdPub, socket);	
 
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
 		if (read_len <= 0)
