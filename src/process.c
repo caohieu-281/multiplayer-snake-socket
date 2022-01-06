@@ -358,9 +358,7 @@ void KillSnake(int thRoom, snake *s)
         listRooms[thRoom].game_map[s->body_segment[i].y][s->body_segment[i].x] = 0;
     pthread_mutex_unlock(&map_lock);
 
-    //Free memory
-    free(s);
-    s = NULL;
+    s->length = 0;
 }
 
 //Function for a snake to eat a fruit in front of it
@@ -492,44 +490,12 @@ void CreateMap(int roomID)
         AddWall(thRoom);
     for (int i = 0; i < 2; i++)
         AddWall2(thRoom);
-    //Find three consecutive zeros in map for starting snake position
-    
-    // int player_no = socket - 3;
-    // snake *player_snake = MakeSnake(thRoom, player_no, head_y, head_x);
 }
 
 void PlayGame(int roomID, int socket)
 {
     int thRoom = SearchRoom(roomID);
-    // int i;
-    // // MakeGame(atoi(arr[1]));
-
-    // //Fill gamestate matrix with zeros
-    // memset(game_map, 0, map_size);
-
-    // //Set game borders
-    // for (i = 0; i < HEIGHT; i++)
-    //     game_map[i][0] = game_map[i][WIDTH - 2] = BORDER;
-    // for (i = 0; i < WIDTH; i++)
-    //     game_map[0][i] = game_map[HEIGHT - 1][i] = BORDER;
-
-    // //Randomly add five fruit
-    // srand(time(NULL));
-    // for (i = 0; i < 5; i++)
-    //     AddFruit(map_lock);
-    // for (i = 0; i < 3; i++)
-    //     AddWall(map_lock);
-    // for (i = 0; i < 2; i++)
-    //     AddWall2(map_lock);
-
-    // //Find three consecutive zeros in map for starting snake position
-    // int head_y, head_x;
-    // srand(time(NULL));
-    // do
-    // {
-    //     head_y = rand() % (HEIGHT - 6) + 3;
-    //     head_x = rand() % (WIDTH - 6) + 3;
-    // } while (!(((game_map[head_y][head_x] == game_map[head_y + 1][head_x]) == game_map[head_y + 2][head_x]) == 0));
+    
     int head_y, head_x;
     srand(time(NULL));
     do
@@ -537,7 +503,7 @@ void PlayGame(int roomID, int socket)
         head_y = rand() % (HEIGHT - 6) + 3;
         head_x = rand() % (WIDTH - 6) + 3;
     } while (!(((listRooms[thRoom].game_map[head_y][head_x] == listRooms[thRoom].game_map[head_y + 1][head_x]) == listRooms[thRoom].game_map[head_y + 2][head_x]) == 0));
-    int player_no = socket - 3;
+    int player_no = SearchUser(listRooms[thRoom].usersInRoom,socket, 1) + 1;
     snake *player_snake = MakeSnake(thRoom, player_no, head_y, head_x);
     int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(listRooms[thRoom].game_map[0][0]);
     //Variables for user input
@@ -596,7 +562,7 @@ void PlayGame(int roomID, int socket)
         if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
 
-        if (player_snake->length != 0)
+        if (player_snake->length)
         {
             switch (key)
             {
@@ -615,7 +581,7 @@ void PlayGame(int roomID, int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(thRoom, player_snake);
                 }
                 break;
             }
@@ -634,7 +600,7 @@ void PlayGame(int roomID, int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(thRoom, player_snake);
                 }
                 break;
             }
@@ -651,7 +617,7 @@ void PlayGame(int roomID, int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(thRoom, player_snake);
                 }
                 break;
             }
@@ -668,7 +634,7 @@ void PlayGame(int roomID, int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(thRoom, player_snake);
                 }
                 break;
             }
@@ -683,14 +649,16 @@ void PlayGame(int roomID, int socket)
     {
         fprintf(stderr, "Player %d had won!\n", player_no);
         // writeFile("nguoidung.txt", l);
-        KillSnake(thRoom, player_snake);
+        free(player_snake);
+        player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
         return 0;
     }
     else
     {
         fprintf(stderr, "Player %d had exited game!\n", player_no);
-        KillSnake(thRoom, player_snake);
+        free(player_snake);
+        player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
         return 0;
     }

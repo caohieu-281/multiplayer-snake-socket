@@ -186,6 +186,7 @@ void InGamePlay(int sockfd)
     init_pair(7, COLOR_BLACK, COLOR_MAGENTA);
     init_pair(8, COLOR_BLACK, COLOR_CYAN);
     init_pair(9, COLOR_BLACK, COLOR_WHITE);
+    
 
     mvprintw((HEIGHT - 20) / 2 + 1, (WIDTH - 58) / 2, "     _______  __    _  _______  ___   _  _______   \n");
     mvprintw((HEIGHT - 20) / 2 + 2, (WIDTH - 58) / 2, "    |       ||  |  | ||   _   ||   | | ||       |  \n");
@@ -252,5 +253,6 @@ void InGamePlay(int sockfd)
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "17");
     ClientSendMessageToServer(sockfd);
+    printf("messCli %s\n", messageClient);
     return GameFunction(sockfd);
 }
