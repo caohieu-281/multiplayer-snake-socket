@@ -258,6 +258,7 @@ void RefreshScreenWaitingRoom(int roomID)
     }
 }
 
+/*game function for server*/
 int someone_won = 0;
 int game_map[HEIGHT + 10][WIDTH + 10];
 int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
@@ -320,7 +321,6 @@ void AddFruit()
     pthread_mutex_unlock(&map_lock);
 }
 
-/*game function for server*/
 //Function to create a snake
 snake *MakeSnake(int player_no, int head_y, int head_x)
 {
@@ -364,10 +364,6 @@ void KillSnake(snake *s)
     for (i = 0; i < s->length - 2; i++)
         game_map[s->body_segment[i].y][s->body_segment[i].x] = 0;
     pthread_mutex_unlock(&map_lock);
-
-    //Free memory
-    free(s);
-    s = NULL;
 }
 
 //Function for a snake to eat a fruit in front of it
@@ -570,11 +566,9 @@ void PlayGame(int socket)
         if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
 
-        if (player_snake->length != 0)
+        if (player_snake != NULL)
         {
-            switch (key)
-            {
-
+            switch (key) {
             case UP:
             {
                 if ((game_map[player_snake->head.y - 1][player_snake->head.x] == 0) &&
@@ -589,7 +583,7 @@ void PlayGame(int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(player_snake);
                 }
                 break;
             }
@@ -608,7 +602,7 @@ void PlayGame(int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(player_snake);
                 }
                 break;
             }
@@ -625,7 +619,7 @@ void PlayGame(int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(player_snake);
                 }
                 break;
             }
@@ -642,7 +636,7 @@ void PlayGame(int socket)
                 }
                 else
                 {
-                    player_snake->length = 0;
+                    KillSnake(player_snake);
                 }
                 break;
             }
@@ -652,19 +646,20 @@ void PlayGame(int socket)
             }
         }
     }
-    // DeleteRoom(4);
     if (player_snake->length - 3 == WINNER_LENGTH)
     {
         fprintf(stderr, "Player %d had won!\n", player_no);
         // writeFile("nguoidung.txt", l);
-        KillSnake(player_snake);
+        free(player_snake);
+        player_snake = NULL;
         game_map[HEIGHT + player_no][WIDTH + 2] = 0;
         return 0;
     }
     else
     {
         fprintf(stderr, "Player %d had exited game!\n", player_no);
-        KillSnake(player_snake);
+        free(player_snake);
+        player_snake = NULL;
         game_map[HEIGHT + player_no][WIDTH + 2] = 0;
         return 0;
     }
