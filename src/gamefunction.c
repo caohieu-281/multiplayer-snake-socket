@@ -95,12 +95,14 @@ void CreateRoom(int sockfd)
             scanf("%s", command);
             if ((strcasecmp(command, "s") == 0) || (strcasecmp(command, "q") == 0))
             {
+        
                 memset(messageClient, 0, sizeof(messageClient));
                 sprintf(messageClient, "15 %s %s", arr[1], command);
                 ClientSendMessageToServer(sockfd);
                 ClientReceiveMessageFromServer(sockfd);
                 if (strcmp(messageClient, "start") == 0)
                 {
+            
                     memset(messageClient, 0, sizeof(messageClient));
                     sprintf(messageClient, "16 %s", arr[1]);
                     ClientSendMessageToServer(sockfd);
@@ -152,6 +154,7 @@ void JoinRoom(int sockfd)
         char inputRoomID[MAX_LENGTH];
         printf("Input room id to join room: ");
         scanf("%s", inputRoomID);
+
         memset(messageClient, 0, sizeof(messageClient));
         sprintf(messageClient, "4 %s", inputRoomID);
         ClientSendMessageToServer(sockfd);
@@ -173,6 +176,7 @@ void JoinRoom(int sockfd)
         // Player in room
         else
         {
+    
             memset(messageClient, 0, sizeof(messageClient));
             sprintf(messageClient, "14 %s", inputRoomID);
             ClientSendMessageToServer(sockfd);
@@ -208,6 +212,7 @@ void JoinRoom(int sockfd)
                 }
                 else if (strcmp(arr[0], "15") == 0)
                 {
+            
                     memset(messageClient, 0, sizeof(messageClient));
                     sprintf(messageClient, "16 %s", inputRoomID);
                     ClientSendMessageToServer(sockfd);
@@ -309,6 +314,7 @@ int LogOut(int sockfd)
 {
     if (Back("logout", "continue"))
     {
+
         memset(messageClient, 0, sizeof(messageClient));
         sprintf(messageClient, "7 ");
         ClientSendMessageToServer(sockfd);

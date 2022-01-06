@@ -258,7 +258,6 @@ void MakeGame(int roomID)
 }
 
 
-int someone_won = 0;
 // int game_map[HEIGHT + 10][WIDTH + 10];
 // int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
 pthread_mutex_t map_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -494,6 +493,8 @@ void CreateMap(int roomID)
 
 void PlayGame(int roomID, int socket)
 {
+    int someone_won = 0;
+
     int thRoom = SearchRoom(roomID);
     
     int head_y, head_x;
@@ -561,6 +562,10 @@ void PlayGame(int roomID, int socket)
         key_buffer = toupper(key_buffer);
         if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
+
+        if(key_buffer == '.'){
+            break;
+        }
 
         if (player_snake->length)
         {
@@ -644,11 +649,10 @@ void PlayGame(int roomID, int socket)
             }
         }
     }
-    // DeleteRoom(4);
     if (player_snake->length - 3 == WINNER_LENGTH)
     {
-        fprintf(stderr, "Player %d had won!\n", player_no);
-        // writeFile("nguoidung.txt", l);
+        UserOutRoom(roomID, roomID);
+        fprintf(stderr, "Player %d in room %d had won!\n", player_no, roomID);
         free(player_snake);
         player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
@@ -656,10 +660,12 @@ void PlayGame(int roomID, int socket)
     }
     else
     {
-        fprintf(stderr, "Player %d had exited game!\n", player_no);
+        UserOutRoom(roomID, socket);
+        fprintf(stderr, "Player %d in room %d had exited game!\n", player_no, roomID);
         free(player_snake);
         player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
+        
         return 0;
     }
 }

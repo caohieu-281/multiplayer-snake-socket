@@ -82,7 +82,7 @@ int numberRooms;
 #define LEFT_KEY            'A'
 #define RIGHT_KEY           'D'
 #define INTERRUPTED -30
-#define WINNER_LENGTH       1
+#define WINNER_LENGTH       5
 #define WINNER              -94
 #define LOSE              -100
 

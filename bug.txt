@@ -10,3 +10,8 @@ Hay nên logout nick đang đăng nhập chỗ khác?
 4. Liên tục join room r out room sẽ khiến số ng trong room max. Vì lúc back chưa truyền thông điệp : done
 
 5, Người chơi (ko phải trưởng phòng) không thoát đc room. Vì không thể gửi nhận cùng lúc (giải quyết: tạo 2 thread)
+
+6. Tất rắn chết không thông báo, end game ko thông báo ai win
+ Chỉ thông báo khi có ng chơi thắng
+
+7. Chơi gêm xong thì bị gửi cả map, không sử dụng được các chức năng khác

@@ -209,11 +209,11 @@ void *connection_handler(int *client_socket)
 	// play_game(roomIdPub, socket);
 	PlayGame(roomIdPub, socket);	
 
-	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
-		if (read_len <= 0)
-			break;
-		if (strcmp(messageServer, "17") == 0) goto begin;
-	}
+	// while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
+	// 	if (read_len <= 0)
+	// 		break;
+	// 	if (strcmp(messageServer, "17") == 0) goto begin;
+	// }
 
 	return 0;
 }

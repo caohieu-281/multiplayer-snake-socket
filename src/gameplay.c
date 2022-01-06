@@ -33,7 +33,7 @@ void* write_to_server(void *arg)
         nanosleep(&ts, NULL);
         int n = send(sockfd, &key, 1, 0);
         if (n < 0)
-            error("ERROR writinguh  to socket.");
+            error("ERROR writing to socket.");
     }
     return 0;
 }
@@ -157,7 +157,7 @@ void* update_screen(void *arg)
         mvprintw(HEIGHT + 1, 5, "If you lose you can continue watching or press '.' to quit at any time\n");
         refresh();
     }
-
+    
     game_result = game_map[0][0];
     return 0;
 }
@@ -217,6 +217,7 @@ void InGamePlay(int sockfd)
         key_buffer = toupper(key_buffer);
         if (key_buffer == '.')
         {
+            key = key_buffer;
             game_result = INTERRUPTED;
             break;
         }
@@ -249,10 +250,9 @@ void InGamePlay(int sockfd)
     echo(); 
     curs_set(1);  
     endwin();
-    // pthread_exit(NULL);
+    pthread_exit(NULL);
     memset(messageClient, 0, sizeof(messageClient));
     sprintf(messageClient, "17");
     ClientSendMessageToServer(sockfd);
-    printf("messCli %s\n", messageClient);
     return GameFunction(sockfd);
 }
