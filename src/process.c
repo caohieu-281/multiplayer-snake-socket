@@ -356,7 +356,6 @@ snake *MakeSnake(int player_no, int head_y, int head_x)
 //Function to kill snake and free memory
 void KillSnake(snake *s)
 {
-
     //Set all snake coordinates to zero on map
     pthread_mutex_lock(&map_lock);
     game_map[s->head.y][s->head.x] = game_map[s->tail.y][s->tail.x] = 0;
@@ -364,6 +363,8 @@ void KillSnake(snake *s)
     for (i = 0; i < s->length - 2; i++)
         game_map[s->body_segment[i].y][s->body_segment[i].x] = 0;
     pthread_mutex_unlock(&map_lock);
+
+    s->length = 0;
 }
 
 //Function for a snake to eat a fruit in front of it
@@ -566,7 +567,7 @@ void PlayGame(int socket)
         if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
 
-        if (player_snake != NULL)
+        if (player_snake->length)
         {
             switch (key) {
             case UP:
