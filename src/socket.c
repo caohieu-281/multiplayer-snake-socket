@@ -9,7 +9,6 @@ int ClientCreateSocket(int port)
         error("ERROR opening socket");
         exit(0);
     }
-
     // Specify an address for the socket
     struct sockaddr_in server_address;
     memset(&server_address, 0, sizeof(server_address));

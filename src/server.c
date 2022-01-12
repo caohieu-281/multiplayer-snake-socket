@@ -208,25 +208,19 @@ void *connection_handler(int *client_socket)
 
 	// play_game(roomIdPub, socket);
 	PlayGame(roomIdPub, socket);
-			
-	// while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
-	// 	if (read_len <= 0)
-	// 		break;
-	// 	if (strcmp(messageServer, "17") == 0) goto begin;
-	// }
 	close(socket);
 	return 0;
 }
 
 //Handle ctrl+c signal
-void ctrl_c_handler(){
+void ctrl_c_s_handler(){
     printf("\nServer exited!.\n");
     exit(0);
 }
 
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, ctrl_c_handler);
+	signal(SIGINT, ctrl_c_s_handler);
 	readUserFromFile();
 	numberRooms = 0;
 	int server_socket = ServerCreateSocket(atoi(argv[1]));

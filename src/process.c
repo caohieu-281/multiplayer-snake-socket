@@ -200,7 +200,7 @@ void UserOutRoom(int roomID, int userID)
     // If host out room -> Out all player in room
     if (listRooms[thRoom].roomID == userID)
     {
-        for (int i = 0; i < listRooms[thRoom].numberUsersInRoom; i++)
+        for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
         {
             // -1: Let out the room
             memset(messageServer, 0, sizeof(messageServer));
@@ -656,7 +656,8 @@ void PlayGame(int roomID, int socket)
         free(player_snake);
         player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
-        return 0;
+        // close(fd);
+        // return 0;
     }
     else
     {
@@ -666,7 +667,7 @@ void PlayGame(int roomID, int socket)
         player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
         
-        return 0;
+        // return 0;
     }
 }
 

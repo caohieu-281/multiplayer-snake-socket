@@ -208,7 +208,7 @@ void JoinRoom(int sockfd)
                     }
                     printf("_____________________________________\n");
                     printf("\n Game will be started by host\n");
-                    printf(" Press [Ctr + C] to quit game!\n");
+                    // printf(" Press [Ctr + C] to quit game!\n");
                 }
                 else if (strcmp(arr[0], "15") == 0)
                 {
