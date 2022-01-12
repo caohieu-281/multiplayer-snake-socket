@@ -6,7 +6,7 @@ void *connection_handler(int *client_socket)
 	int send_status;
 	int read_len;
 	int roomIdPub = -1;
-	begin:
+	int flag = 0;
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
 	{
 		int count;
@@ -194,12 +194,13 @@ void *connection_handler(int *client_socket)
 			}
 			if (strcasecmp(arr[2], "q") == 0)
 			{
-				UserOutRoom(atoi(arr[1]), socket);
+				UserOutRoom(atoi(arr[1]), socket, 1);
 			}
 		}
 		// Play game
 		else if (strcmp(arr[0], "16") == 0)
 		{
+			flag = 1;
 			roomIdPub = atoi(arr[1]);
 			break;
 		}
@@ -207,7 +208,8 @@ void *connection_handler(int *client_socket)
 	}
 
 	// play_game(roomIdPub, socket);
-	PlayGame(roomIdPub, socket);
+	if(flag == 1)
+		PlayGame(roomIdPub, socket);
 	close(socket);
 	return 0;
 }

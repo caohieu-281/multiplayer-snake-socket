@@ -194,20 +194,43 @@ void DeleteRoom(int roomID)
     numberRooms--;
 }
 
-void UserOutRoom(int roomID, int userID)
+void UserOutRoom(int roomID, int userID, int when)
 {
     int thRoom = SearchRoom(roomID);
     // If host out room -> Out all player in room
     if (listRooms[thRoom].roomID == userID)
     {
-        for (int i = 1; i < listRooms[thRoom].numberUsersInRoom; i++)
+        if (when == 1)
         {
-            // -1: Let out the room
-            memset(messageServer, 0, sizeof(messageServer));
-            sprintf(messageServer, "-1");
-            ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
+            for (int i = 0; i < listRooms[thRoom].numberUsersInRoom; i++)
+            {
+                // -1: Let out the room
+                memset(messageServer, 0, sizeof(messageServer));
+                sprintf(messageServer, "-1");
+                ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
+            }
+            DeleteRoom(roomID);
         }
-        DeleteRoom(roomID);
+        else
+        {
+            if (listRooms[thRoom].numberUsersInRoom == 1)
+            {
+                DeleteRoom(roomID);
+                return;
+            }
+            else
+            {
+                for (int i = 1; i < listRooms[thRoom].numberUsersInRoom - 1; i++)
+                {
+                    strcpy(listRooms[thRoom].usersInRoom[i].password, listRooms[thRoom].usersInRoom[i + 1].password);
+                    strcpy(listRooms[thRoom].usersInRoom[i].username, listRooms[thRoom].usersInRoom[i + 1].username);
+                    listRooms[thRoom].usersInRoom[i].socketID = listRooms[thRoom].usersInRoom[i + 1].socketID;
+                    listRooms[thRoom].usersInRoom[i].score = listRooms[thRoom].usersInRoom[i + 1].score;
+                    listRooms[thRoom].usersInRoom[i].status = listRooms[thRoom].usersInRoom[i + 1].status;
+                }
+                listRooms[thRoom].numberUsersInRoom--;
+            }
+        }
     }
     // If player in room (not host)
     else
@@ -215,6 +238,11 @@ void UserOutRoom(int roomID, int userID)
         memset(messageServer, 0, sizeof(messageServer));
         sprintf(messageServer, "-1");
         ServerSendToClient(userID);
+        if (listRooms[thRoom].numberUsersInRoom == 1)
+        {
+            DeleteRoom(roomID);
+            return;
+        }
         int thUserInRoom = SearchUser(listRooms[thRoom].usersInRoom, userID, 1);
         for (int i = thUserInRoom; i < listRooms[thRoom].numberUsersInRoom - 1; i++)
         {
@@ -256,7 +284,6 @@ void MakeGame(int roomID)
         ServerSendToClient(listRooms[thRoom].usersInRoom[i].socketID);
     }
 }
-
 
 // int game_map[HEIGHT + 10][WIDTH + 10];
 // int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(game_map[0][0]);
@@ -474,7 +501,7 @@ void CreateMap(int roomID)
 
     //Fill gamestate matrix with zeros
     memset(listRooms[thRoom].game_map, 0, map_size);
-    
+
     //Set game borders
     for (int i = 0; i < HEIGHT; i++)
         listRooms[thRoom].game_map[i][0] = listRooms[thRoom].game_map[i][WIDTH - 2] = BORDER;
@@ -496,7 +523,7 @@ void PlayGame(int roomID, int socket)
     int someone_won = 0;
 
     int thRoom = SearchRoom(roomID);
-    
+
     int head_y, head_x;
     srand(time(NULL));
     do
@@ -504,7 +531,7 @@ void PlayGame(int roomID, int socket)
         head_y = rand() % (HEIGHT - 6) + 3;
         head_x = rand() % (WIDTH - 6) + 3;
     } while (!(((listRooms[thRoom].game_map[head_y][head_x] == listRooms[thRoom].game_map[head_y + 1][head_x]) == listRooms[thRoom].game_map[head_y + 2][head_x]) == 0));
-    int player_no = SearchUser(listRooms[thRoom].usersInRoom,socket, 1) + 1;
+    int player_no = SearchUser(listRooms[thRoom].usersInRoom, socket, 1) + 1;
     snake *player_snake = MakeSnake(thRoom, player_no, head_y, head_x);
     int map_size = (HEIGHT + 10) * (WIDTH + 10) * sizeof(listRooms[thRoom].game_map[0][0]);
     //Variables for user input
@@ -513,7 +540,7 @@ void PlayGame(int roomID, int socket)
     char map_buffer[map_size];
     int bytes_sent, n;
     int success = 1;
-    
+
     memcpy(map_buffer, listRooms[thRoom].game_map, map_size);
     bytes_sent = 0;
     while (bytes_sent < map_size)
@@ -563,7 +590,8 @@ void PlayGame(int roomID, int socket)
         if (((key_buffer == UP) && !(player_snake->head.d == DOWN)) || ((key_buffer == DOWN) && !(player_snake->head.d == UP)) || ((key_buffer == LEFT) && !(player_snake->head.d == RIGHT)) || ((key_buffer == RIGHT) && !(player_snake->head.d == LEFT)))
             key = key_buffer;
 
-        if(key_buffer == '.'){
+        if (key_buffer == '.')
+        {
             break;
         }
 
@@ -651,7 +679,7 @@ void PlayGame(int roomID, int socket)
     }
     if (player_snake->length - 3 == WINNER_LENGTH)
     {
-        UserOutRoom(roomID, roomID);
+        UserOutRoom(roomID, roomID, 0);
         fprintf(stderr, "Player %d in room %d had won!\n", player_no, roomID);
         free(player_snake);
         player_snake = NULL;
@@ -661,12 +689,12 @@ void PlayGame(int roomID, int socket)
     }
     else
     {
-        UserOutRoom(roomID, socket);
+        UserOutRoom(roomID, socket, 0);
         fprintf(stderr, "Player %d in room %d had exited game!\n", player_no, roomID);
         free(player_snake);
         player_snake = NULL;
         listRooms[thRoom].game_map[HEIGHT + player_no][WIDTH + 2] = 0;
-        
+
         // return 0;
     }
 }
