@@ -12,7 +12,7 @@ void GameFunction(int sockfd)
         {
             system("clear");
             CreateRoom(sockfd);
-            printf("----------------------Create Room------------------\n");
+            return 0;
         }
         // Join waiting-room
         else if (strcmp(choice, "2") == 0)
@@ -20,7 +20,7 @@ void GameFunction(int sockfd)
             system("clear");
             ViewWelcomeScreen();
             JoinRoom(sockfd);
-            printf("\n_______Let's play________\n\n");
+            return 0;
         }
         // Change Password
         else if (strcmp(choice, "3") == 0)

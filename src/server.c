@@ -5,7 +5,6 @@ void *connection_handler(int *client_socket)
 	int socket = *(int *)client_socket;
 	int send_status;
 	int read_len;
-	// int play = 0;
 	int roomIdPub = -1;
 	begin:
 	while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0)
@@ -198,6 +197,7 @@ void *connection_handler(int *client_socket)
 				UserOutRoom(atoi(arr[1]), socket);
 			}
 		}
+		// Play game
 		else if (strcmp(arr[0], "16") == 0)
 		{
 			roomIdPub = atoi(arr[1]);
@@ -207,19 +207,26 @@ void *connection_handler(int *client_socket)
 	}
 
 	// play_game(roomIdPub, socket);
-	PlayGame(roomIdPub, socket);	
-
+	PlayGame(roomIdPub, socket);
+			
 	// while ((read_len = recv(socket, messageServer, MESSAGE_MAX, 0)) > 0) {
 	// 	if (read_len <= 0)
 	// 		break;
 	// 	if (strcmp(messageServer, "17") == 0) goto begin;
 	// }
-
+	close(socket);
 	return 0;
+}
+
+//Handle ctrl+c signal
+void ctrl_c_handler(){
+    printf("\nServer exited!.\n");
+    exit(0);
 }
 
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, ctrl_c_handler);
 	readUserFromFile();
 	numberRooms = 0;
 	int server_socket = ServerCreateSocket(atoi(argv[1]));
@@ -252,6 +259,7 @@ int main(int argc, char *argv[])
 		pthread_join(threads[k], NULL);
 	}
 
-	close(server_socket);
+	// close(server_socket);
+	pthread_exit(NULL);
 	return 0;
 }

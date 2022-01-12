@@ -250,9 +250,14 @@ void InGamePlay(int sockfd)
     echo(); 
     curs_set(1);  
     endwin();
-    pthread_exit(NULL);
-    memset(messageClient, 0, sizeof(messageClient));
-    sprintf(messageClient, "17");
-    ClientSendMessageToServer(sockfd);
-    return GameFunction(sockfd);
+    // pthread_exit(NULL);
+    // memset(messageClient, 0, sizeof(messageClient));
+    // sprintf(messageClient, "17");
+    // ClientSendMessageToServer(sockfd);
+    
+    // close(sockfd);
+    return 0;
+    // exit(0);
+    // printf("ve man hinh game");
+    // return GameFunction(sockfd);
 }
