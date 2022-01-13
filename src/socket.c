@@ -1,6 +1,6 @@
 #include "init.h"
 
-int ClientCreateSocket(int port)
+int ClientCreateSocket(int port, char *ip)
 {
     int sockfd;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -14,7 +14,7 @@ int ClientCreateSocket(int port)
     memset(&server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_address.sin_addr.s_addr = inet_addr(ip);
 
     // Connect the client to the server socket
     if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)

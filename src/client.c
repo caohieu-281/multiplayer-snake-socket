@@ -27,7 +27,7 @@ void INThandler(int sig)
 int main(int argc, char *argv[])
 {
     signal(SIGINT, INThandler);
-    int sockfd = ClientCreateSocket(atoi(argv[1]));
+    int sockfd = ClientCreateSocket(atoi(argv[1]), argv[2]);
     LoginGame(sockfd);
     return 0;
 }
