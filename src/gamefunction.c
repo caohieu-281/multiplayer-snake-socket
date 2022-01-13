@@ -165,6 +165,7 @@ void JoinRoom(int sockfd)
             printf("\nRoomID is not exist\n");
             CountTime("Return play game screen", 4);
             system("clear");
+            return GameFunction(sockfd);
         }
         // Cannot join room cuz max player in room
         else if (strcmp(messageClient, "-1") == 0)
@@ -172,11 +173,11 @@ void JoinRoom(int sockfd)
             printf("\nCannot join room cuz max player in this room\n");
             CountTime("Return play game screen", 5);
             system("clear");
+            return GameFunction(sockfd);
         }
         // Player in room
         else
         {
-    
             memset(messageClient, 0, sizeof(messageClient));
             sprintf(messageClient, "14 %s", inputRoomID);
             ClientSendMessageToServer(sockfd);
@@ -223,7 +224,6 @@ void JoinRoom(int sockfd)
             }
         }
     }
-    freeMemory(lsRoom, countRoom);
 }
 
 int ChangePassword(sockfd)
